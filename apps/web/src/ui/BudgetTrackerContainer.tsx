@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { type BudgetCart } from '@clean/cart';
 import { useDependencies } from './DependencyContext';
 import { BudgetTrackerView } from './BudgetTrackerView';
@@ -10,24 +10,34 @@ type ToastMsg = {
 };
 
 export function BudgetTrackerContainer() {
-  const { notificationAdapter, cartUseCase, addItemUseCase, updateLimitUseCase, removeItemUseCase } = useDependencies();
+  const {
+    notificationAdapter,
+    cartUseCase,
+    addItemUseCase,
+    updateLimitUseCase,
+    removeItemUseCase,
+  } = useDependencies();
 
   const [cart, setCart] = useState<BudgetCart | null>(null);
   const [loading, setLoading] = useState(true);
   const [toasts, setToasts] = useState<ToastMsg[]>([]);
 
-  const loadCart = useCallback(async () => {
-    setLoading(true);
-    const result = await cartUseCase.execute('default-planner');
-    if (result.ok) {
-      setCart(result.value);
-    }
-    setLoading(false);
-  }, [cartUseCase]);
-
   useEffect(() => {
-    loadCart();
-  }, [loadCart]);
+    let active = true;
+    async function initCart() {
+      const result = await cartUseCase.execute('default-planner');
+      if (active) {
+        if (result.ok) {
+          setCart(result.value);
+        }
+        setLoading(false);
+      }
+    }
+    initCart();
+    return () => {
+      active = false;
+    };
+  }, [cartUseCase]);
 
   useEffect(() => {
     const unsubscribe = notificationAdapter.subscribe((message, type) => {

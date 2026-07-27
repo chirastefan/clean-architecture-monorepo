@@ -6,8 +6,43 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Hexagonal
 
 ## 📚 Documentation Index
 
-* 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Detailed guide on Hexagonal Architecture, DDD, Result Pattern, DTO isolation, and directory layout.
-* 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Specifications for TypeScript 5.6, React 18, Vite 6, Nx 20, Vitest 4, and MSW 2.
+- 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Detailed guide on Hexagonal Architecture, DDD, Result Pattern, DTO isolation, and directory layout.
+- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Specifications for TypeScript 5.6, React 18, Vite 6, Nx 20, Vitest 4, and MSW 2.
+
+---
+
+## 🔀 Mocking Strategy Templates (Branches)
+
+This repository demonstrates two different frontend mocking strategies. Switch between them by checking out their respective Git branches:
+
+### 1. Mock Service Worker (MSW) Interception (on `main`)
+
+Uses the browser's native Service Worker API to intercept requests inside the network layer.
+
+- **Best for:** Self-contained frontend prototyping, component/unit testing in Vitest, and zero-infrastructure QA testing.
+- **How to run:**
+  ```bash
+  git checkout main
+  npm install
+  npm run dev -w web
+  ```
+
+### 2. Standalone Mock API Server (on your `mock-api` branch)
+
+Uses a lightweight local Express/Node server running in `apps/mock-api` on port `4000` to serve actual HTTP requests over localhost.
+
+- **Best for:** Testing raw HTTP traffic/CORS setups, sharing mock data with mobile clients (`apps/mobile`) which don't support browser service workers, or deploying a mock backend container to dev/staging environments.
+- **How to run:**
+  ```bash
+  git checkout <your-mock-api-branch>
+  npm install
+
+  # Start the Mock API server (running on port 4000)
+  npx nx run mock-api:dev
+
+  # Start the Web application (running on port 5173, queries port 4000)
+  npx nx run web:dev
+  ```
 
 ---
 
@@ -35,8 +70,9 @@ packages/
   └── shared-ui-logic/--> @clean/ui-logic (Platform-agnostic useHeadlessSelect)
 
 apps/
-  ├── web/            --> React 18 Web App (MSW, LocalStorage/HTTP Adapters, CompositionRoot)
-  └── mobile/         --> React Native Mobile App (AsyncStorage Adapter, Native Alert Adapter)
+  ├── web/            --> React 18 Web App (LocalStorage/HTTP Adapters, CompositionRoot)
+  ├── mobile/         --> React Native Mobile App (AsyncStorage Adapter, Native Alert Adapter)
+  └── mock-api/       --> Standalone Express/TypeScript Mock API server (GET/PUT /api/carts/:id)
 ```
 
 ---
@@ -44,11 +80,13 @@ apps/
 ## ⚡ Quick Start Commands
 
 ### 1. Install Dependencies
+
 ```bash
 npm install
 ```
 
 ### 2. Run Test Suite Across All 7 Workspace Projects (Nx Caching Enabled)
+
 ```bash
 npm test
 # or
@@ -56,11 +94,13 @@ npx nx run-many -t test
 ```
 
 ### 3. Run Web App Dev Server
+
 ```bash
 npm run dev -w web
 ```
 
 ### 4. Visualize Nx Workspace Graph
+
 ```bash
 npx nx graph
 ```

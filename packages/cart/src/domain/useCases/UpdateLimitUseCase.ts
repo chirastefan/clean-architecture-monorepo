@@ -21,9 +21,10 @@ export class UpdateLimitUseCase {
       this.notifier.notify(`Budget goal updated to $${limit.toFixed(2)}`, 'success');
       return ok(cart);
     } catch (error) {
-      const domainError = error instanceof DomainError
-        ? error
-        : new DomainError('Failed to update budget limit.', 'UPDATE_LIMIT_ERROR');
+      const domainError =
+        error instanceof DomainError
+          ? error
+          : new DomainError('Failed to update budget limit.', 'UPDATE_LIMIT_ERROR');
 
       this.notifier.notify(domainError.message, 'error');
       return fail(domainError);

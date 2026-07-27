@@ -37,9 +37,10 @@ export class AddItemUseCase {
       this.notifier.notify(`Added "${name}" ($${price.toFixed(2)}) to planner.`, 'success');
       return ok(cart);
     } catch (error) {
-      const domainError = error instanceof DomainError
-        ? error
-        : new DomainError('Failed to add item.', 'ADD_ITEM_ERROR');
+      const domainError =
+        error instanceof DomainError
+          ? error
+          : new DomainError('Failed to add item.', 'ADD_ITEM_ERROR');
 
       this.logger?.error('AddItemUseCase failed', domainError);
       this.notifier.notify(domainError.message, 'error');

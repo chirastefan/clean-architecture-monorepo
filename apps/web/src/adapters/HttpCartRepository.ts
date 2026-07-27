@@ -12,7 +12,7 @@ export class HttpCartRepository implements CartRepositoryPort {
     try {
       const response = await this.fetchClient(`${this.baseUrl}/api/carts/${cartId}`, {
         method: 'GET',
-        headers: { 'Accept': 'application/json' },
+        headers: { Accept: 'application/json' },
       });
 
       if (!response.ok) {

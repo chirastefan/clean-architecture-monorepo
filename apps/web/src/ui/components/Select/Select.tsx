@@ -1,5 +1,9 @@
 import { createContext, useContext, type ReactNode } from 'react';
-import { useHeadlessSelect, type UseHeadlessSelectOptions, type SelectOption } from '@shared/ui-logic';
+import {
+  useHeadlessSelect,
+  type UseHeadlessSelectOptions,
+  type SelectOption,
+} from '@shared/ui-logic';
 
 type SelectContextType = {
   isOpen: boolean;
@@ -49,7 +53,13 @@ export function SelectTrigger({ className }: { className?: string }) {
   );
 }
 
-export function SelectOptions({ children, className }: { children: ReactNode; className?: string }) {
+export function SelectOptions({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) {
   const { isOpen, getListboxProps } = useSelectContext();
   const listboxProps = getListboxProps();
 

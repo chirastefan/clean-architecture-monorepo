@@ -18,9 +18,7 @@ export class InMemoryAsyncStorage implements AsyncStorageLike {
 }
 
 export class AsyncStorageCartRepository implements CartRepositoryPort {
-  constructor(
-    private readonly storage: AsyncStorageLike = new InMemoryAsyncStorage()
-  ) {}
+  constructor(private readonly storage: AsyncStorageLike = new InMemoryAsyncStorage()) {}
 
   public async getCart(cartId: string): Promise<BudgetCart> {
     try {

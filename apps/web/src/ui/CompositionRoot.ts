@@ -1,9 +1,4 @@
-import {
-  CartUseCase,
-  AddItemUseCase,
-  UpdateLimitUseCase,
-  RemoveItemUseCase,
-} from '@clean/cart';
+import { CartUseCase, AddItemUseCase, UpdateLimitUseCase, RemoveItemUseCase } from '@clean/cart';
 
 import { ConsoleLoggerAdapter } from '@clean/logger';
 import { LocalStorageCartRepository } from '../adapters/LocalStorageCartRepository';
@@ -25,14 +20,8 @@ const addItemUseCase = new AddItemUseCase(
   clock,
   logger
 );
-const updateLimitUseCase = new UpdateLimitUseCase(
-  cartRepository,
-  notificationAdapter
-);
-const removeItemUseCase = new RemoveItemUseCase(
-  cartRepository,
-  notificationAdapter
-);
+const updateLimitUseCase = new UpdateLimitUseCase(cartRepository, notificationAdapter);
+const removeItemUseCase = new RemoveItemUseCase(cartRepository, notificationAdapter);
 
 export const dependencies = {
   notificationAdapter,

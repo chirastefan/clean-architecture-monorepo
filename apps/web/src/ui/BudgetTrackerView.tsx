@@ -38,11 +38,11 @@ export function BudgetTrackerView({
 }: BudgetTrackerViewProps) {
   const [isEditingLimit, setIsEditingLimit] = useState(false);
   const [newLimit, setNewLimit] = useState('');
-  
+
   const [itemName, setItemName] = useState('');
   const [itemPrice, setItemPrice] = useState('');
   const [itemCategory, setItemCategory] = useState('grocery');
-  
+
   const [categoryFilter, setCategoryFilter] = useState('all');
 
   const handleAddSubmit = (e: FormEvent) => {
@@ -122,7 +122,9 @@ export function BudgetTrackerView({
                     min="0"
                     required
                   />
-                  <button type="submit" className="save-limit-btn">✓</button>
+                  <button type="submit" className="save-limit-btn">
+                    ✓
+                  </button>
                   <button
                     type="button"
                     onClick={() => setIsEditingLimit(false)}
@@ -145,7 +147,10 @@ export function BudgetTrackerView({
               <div className="budget-stats">
                 <span>Spent: ${totalSpent.toFixed(2)}</span>
                 <span className="remaining-budget">
-                  Remaining: <strong className={remaining < 30 ? 'low-budget' : ''}>${remaining.toFixed(2)}</strong>
+                  Remaining:{' '}
+                  <strong className={remaining < 30 ? 'low-budget' : ''}>
+                    ${remaining.toFixed(2)}
+                  </strong>
                 </span>
               </div>
             </div>
@@ -221,7 +226,7 @@ export function BudgetTrackerView({
                 <h3>Planning Shopping List</h3>
                 <span className="ledger-badge">Clean Architecture Monorepo</span>
               </div>
-              
+
               <Select
                 options={CATEGORY_OPTIONS}
                 selectedValue={categoryFilter}
@@ -250,7 +255,8 @@ export function BudgetTrackerView({
                     <div className="item-details">
                       <span className="tx-title">{item.name}</span>
                       <span className="tx-time">
-                        {categoryNames[item.category]} • {new Date(item.timestamp).toLocaleTimeString()}
+                        {categoryNames[item.category]} •{' '}
+                        {new Date(item.timestamp).toLocaleTimeString()}
                       </span>
                     </div>
                     <div className="item-value" style={{ marginRight: '16px' }}>

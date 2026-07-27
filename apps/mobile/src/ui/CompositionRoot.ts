@@ -22,20 +22,9 @@ const clock: ClockPort = {
 };
 
 const cartUseCase = new CartUseCase(cartRepository);
-const addItemUseCase = new AddItemUseCase(
-  cartRepository,
-  notificationAdapter,
-  idGenerator,
-  clock
-);
-const updateLimitUseCase = new UpdateLimitUseCase(
-  cartRepository,
-  notificationAdapter
-);
-const removeItemUseCase = new RemoveItemUseCase(
-  cartRepository,
-  notificationAdapter
-);
+const addItemUseCase = new AddItemUseCase(cartRepository, notificationAdapter, idGenerator, clock);
+const updateLimitUseCase = new UpdateLimitUseCase(cartRepository, notificationAdapter);
+const removeItemUseCase = new RemoveItemUseCase(cartRepository, notificationAdapter);
 
 export const mobileDependencies = {
   cartUseCase,

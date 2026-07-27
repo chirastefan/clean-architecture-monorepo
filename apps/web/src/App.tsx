@@ -10,7 +10,8 @@ function App() {
         <header className="dashboard-header">
           <h1>DDD Feature Packages Monorepo</h1>
           <p className="subtitle">
-            Consuming <code>@domain/cart</code> and <code>@domain/auth</code> feature packages directly inside apps/web.
+            Consuming <code>@domain/cart</code> and <code>@domain/auth</code> feature packages
+            directly inside apps/web.
           </p>
         </header>
 

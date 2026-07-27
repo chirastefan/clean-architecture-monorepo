@@ -21,9 +21,10 @@ export class RemoveItemUseCase {
       this.notifier.notify('Removed item from planner.', 'info');
       return ok(cart);
     } catch (error) {
-      const domainError = error instanceof DomainError
-        ? error
-        : new DomainError('Failed to remove item.', 'REMOVE_ITEM_ERROR');
+      const domainError =
+        error instanceof DomainError
+          ? error
+          : new DomainError('Failed to remove item.', 'REMOVE_ITEM_ERROR');
 
       this.notifier.notify(domainError.message, 'error');
       return fail(domainError);

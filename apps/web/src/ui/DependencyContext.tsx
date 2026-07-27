@@ -8,11 +8,7 @@ export interface DependencyProviderProps {
 }
 
 export function DependencyProvider({ children }: { children: ReactNode }) {
-  return (
-    <DependencyContext.Provider value={dependencies}>
-      {children}
-    </DependencyContext.Provider>
-  );
+  return <DependencyContext.Provider value={dependencies}>{children}</DependencyContext.Provider>;
 }
 
 export function useDependencies() {
