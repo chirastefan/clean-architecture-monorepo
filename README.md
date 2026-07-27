@@ -20,7 +20,11 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Presentat
 - **Headless UI State Hooks (`useHeadlessSelect.ts` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
 - **Presentation State Store (`useCartStore.ts`):** Lightweight Zustand store living in `apps/web/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases and updates UI state with returned `BudgetCart` domain entities.
 
-> 💡 **Recap of Pattern 1:** The Presentation Layer handles rendering and user interaction _only_. It consumes Use Cases as primary entry points and contains zero business rules or validation logic.
+#### ✅ Pros & Architectural Advantages:
+
+- **Separation of Concerns:** View components remain 100% decorative and reusable without embedded side-effects.
+- **Instant UI Testing:** Dumb presentational views can be unit-tested or iterated on in Storybook with plain props without mocking complex backend APIs.
+- **Platform-Agnostic Headless Logic:** Headless state hooks can be shared directly across React Web and React Native.
 
 ---
 
@@ -30,7 +34,11 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Presentat
 - **Inbound Ports (Primary):** Use Case interfaces (`CartUseCase`, `AddItemUseCase`) invoked by Presentation Container components and Zustand stores.
 - **Outbound Ports (Secondary):** Infrastructure interfaces (`CartRepositoryPort`, `NotificationPort`, `LoggerPort`) implemented by concrete platform infrastructure adapters (`LocalStorageCartRepository`, `ToastNotificationAdapter`, `ConsoleLoggerAdapter`).
 
-> 💡 **Recap of Pattern 2:** Ports & Adapters decouple core domain logic from external frameworks, allowing you to swap infrastructure (e.g., LocalStorage vs HTTP REST vs React Native) without modifying business code.
+#### ✅ Pros & Architectural Advantages:
+
+- **100% Framework Independence:** Core business rules are insulated from UI or database framework replacements.
+- **Pluggable Infrastructure:** Easily swap LocalStorage for HTTP REST APIs, or swap Web Toast notifications for Native Alerts without changing business code.
+- **Fast In-Memory Unit Testing:** Business logic tests execute in pure Node.js in milliseconds without needing a browser or database.
 
 ---
 
@@ -40,7 +48,11 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Presentat
 - **Ubiquitous Language:** Domain entity names and use case operations (`BudgetCart.addItem()`, `AddItemUseCase`) match real-world business domain concepts directly.
 - **Typed Domain Errors:** Custom error classes (`BudgetExceededError`, `InvalidBudgetLimitError`) encapsulate domain validation failure rules cleanly.
 
-> 💡 **Recap of Pattern 3:** Slicing code into Bounded Context packages establishes clear ownership boundaries and provides the exact foundation required for micro-frontend (MFE) or microservice architecture.
+#### ✅ Pros & Architectural Advantages:
+
+- **Micro-Frontend & Microservice Ready:** Independent package boundaries simplify splitting monorepos into separate micro-frontends or microservices later.
+- **Clear Team Ownership:** Autonomous teams can work on different bounded context packages (`packages/cart`, `packages/auth`) with zero code collision.
+- **Explicit Error Boundaries:** Domain rules fail with explicit, typed error objects rather than cryptic generic strings.
 
 ---
 
@@ -49,7 +61,11 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Presentat
 - Replaces unhandled try/catch exception throwing with a type-safe `Result<T, E>` discriminated union (`ok()` and `fail()`).
 - Forces use case callers (UI containers and Zustand stores) to explicitly handle success and failure paths at compile time.
 
-> 💡 **Recap of Pattern 4:** Treating failure as a first-class return value eliminates uncaught runtime exceptions and makes error handling explicit in TypeScript signatures.
+#### ✅ Pros & Architectural Advantages:
+
+- **Zero Uncaught Exceptions:** Eliminates unexpected runtime crashes caused by unhandled thrown errors.
+- **Compile-Time Safety:** TypeScript forces callers to check `if (result.ok)` before accessing return values.
+- **Predictable Error Propagation:** Errors flow predictably through the pipeline without polluting global error boundaries.
 
 ---
 
@@ -58,7 +74,10 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Presentat
 - `CompositionRoot.ts` in each application acts as the central Dependency Injection Container.
 - Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`DependencyContext.tsx`) or Zustand store, preserving strict architectural boundaries.
 
-> 💡 **Recap of Pattern 5:** Centralizing object instantiation at the application entry point prevents components from importing concrete adapters directly, guaranteeing loose coupling.
+#### ✅ Pros & Architectural Advantages:
+
+- **Zero Component Coupling:** Components and stores never import concrete adapters directly.
+- **Single Configuration Point:** Changing an infrastructure implementation (e.g. enabling a Mock API) happens in one central file.
 
 ---
 
@@ -66,16 +85,16 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Presentat
 
 ```
 packages/
-  ├── cart/           --> @clean/cart (BudgetCart Entity, Use Cases, Typed Errors)
-  ├── auth/           --> @clean/auth (User Entity, Login Use Case)
-  ├── shared-logger/  --> @clean/logger (LoggerPort, ConsoleLoggerAdapter)
-  ├── shared-telemetry/-> @clean/telemetry (TelemetryPort, ConsoleTelemetryAdapter)
-  └── shared-ui-logic/--> @clean/ui-logic (Platform-agnostic useHeadlessSelect)
+  ├── cart/        --> @clean/cart (BudgetCart Entity, Use Cases, Typed Errors)
+  ├── auth/        --> @clean/auth (User Entity, Login Use Case)
+  ├── logger/      --> @clean/logger (LoggerPort, ConsoleLoggerAdapter)
+  ├── telemetry/   --> @clean/telemetry (TelemetryPort, ConsoleTelemetryAdapter)
+  └── ui-logic/    --> @clean/ui-logic (Platform-agnostic useHeadlessSelect)
 
 apps/
-  ├── web/            --> React 18 Web App (Presentation Layer, Zustand Store, CompositionRoot)
-  ├── mobile/         --> React Native Mobile App (AsyncStorage Adapter, Native Alert Adapter)
-  └── mock-api/       --> Standalone Express Mock REST Server (Port 4000)
+  ├── web/         --> React 18 Web App (Presentation Layer, Zustand Store, CompositionRoot)
+  ├── mobile/      --> React Native Mobile App (AsyncStorage Adapter, Native Alert Adapter)
+  └── mock-api/    --> Standalone Express Mock REST Server (Port 4000)
 ```
 
 ---
@@ -106,6 +125,8 @@ npm run format
 ### 4. Run Web App Dev Server
 
 ```bash
+npm start
+# or
 npm run dev -w web
 ```
 

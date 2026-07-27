@@ -17,9 +17,11 @@ This repository combines enterprise-grade architectural patterns to achieve 100%
 - **Headless UI State Hooks (`useHeadlessSelect.ts` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
 - **Presentation State Store (`useCartStore.ts`):** Lightweight Zustand store living inside `apps/web/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases and updates UI state with returned `BudgetCart` domain entities.
 
-#### 💡 Recap of Pattern 1: Presentation Layer Pattern
+#### ✅ Pros & Architectural Advantages:
 
-> **Key Takeaway:** The Presentation Layer is responsible _only_ for rendering UI components, managing user interactions, and holding ephemeral UI state. It consumes Clean Use Cases as primary entry points (Inbound Adapters) and never contains business rules or domain validation logic.
+- **Separation of Concerns:** View components remain 100% decorative and reusable without embedded side-effects.
+- **Instant UI Testing:** Dumb presentational views can be unit-tested or iterated on in Storybook with plain props without mocking complex backend APIs.
+- **Platform-Agnostic Headless Logic:** Headless state hooks can be shared directly across React Web and React Native.
 
 ---
 
@@ -29,9 +31,11 @@ This repository combines enterprise-grade architectural patterns to achieve 100%
 - **Inbound Ports (Primary):** Use Case interfaces (`CartUseCase`, `AddItemUseCase`, `RemoveItemUseCase`) invoked by Presentation Container components and Zustand stores.
 - **Outbound Ports (Secondary):** Infrastructure interfaces (`CartRepositoryPort`, `NotificationPort`, `LoggerPort`) implemented by concrete platform infrastructure adapters (`LocalStorageCartRepository`, `ToastNotificationAdapter`, `ConsoleLoggerAdapter`).
 
-#### 💡 Recap of Pattern 2: Hexagonal Architecture
+#### ✅ Pros & Architectural Advantages:
 
-> **Key Takeaway:** By decoupling core domain logic from external frameworks via Ports & Adapters, you can swap out infrastructure (e.g., replace LocalStorage with HTTP REST, or React Web with React Native) without modifying a single line of business code.
+- **100% Framework Independence:** Core business rules are insulated from UI or database framework replacements.
+- **Pluggable Infrastructure:** Easily swap LocalStorage for HTTP REST APIs, or swap Web Toast notifications for Native Alerts without changing business code.
+- **Fast In-Memory Unit Testing:** Business logic tests execute in pure Node.js in milliseconds without needing a browser or database.
 
 ---
 
@@ -41,9 +45,11 @@ This repository combines enterprise-grade architectural patterns to achieve 100%
 - **Ubiquitous Language:** Domain entity names and use case operations (`BudgetCart.addItem()`, `AddItemUseCase`) match real-world business domain concepts directly.
 - **Typed Domain Errors:** Custom error classes (`BudgetExceededError`, `InvalidBudgetLimitError`) encapsulate domain validation failure rules cleanly.
 
-#### 💡 Recap of Pattern 3: Domain-Driven Design
+#### ✅ Pros & Architectural Advantages:
 
-> **Key Takeaway:** Vertical slicing into Bounded Context packages creates clear ownership boundaries, prevents domain concept pollution, and lays the exact foundation required for micro-frontend (MFE) or microservice architecture.
+- **Micro-Frontend & Microservice Ready:** Independent package boundaries simplify splitting monorepos into separate micro-frontends or microservices later.
+- **Clear Team Ownership:** Autonomous teams can work on different bounded context packages (`packages/cart`, `packages/auth`) with zero code collision.
+- **Explicit Error Boundaries:** Domain rules fail with explicit, typed error objects rather than cryptic generic strings.
 
 ---
 
@@ -52,9 +58,11 @@ This repository combines enterprise-grade architectural patterns to achieve 100%
 - Replaces unhandled try/catch exception throwing with a type-safe `Result<T, E>` discriminated union (`ok()` and `fail()`).
 - Forces use case callers (UI containers and Zustand stores) to explicitly handle success and failure paths at compile time.
 
-#### 💡 Recap of Pattern 4: Result / Either Pattern
+#### ✅ Pros & Architectural Advantages:
 
-> **Key Takeaway:** Treating failure as a first-class return value eliminates runtime uncaught exceptions, makes error handling explicit in TypeScript signatures, and streamlines UI error reporting.
+- **Zero Uncaught Exceptions:** Eliminates unexpected runtime crashes caused by unhandled thrown errors.
+- **Compile-Time Safety:** TypeScript forces callers to check `if (result.ok)` before accessing return values.
+- **Predictable Error Propagation:** Errors flow predictably through the pipeline without polluting global error boundaries.
 
 ---
 
@@ -63,9 +71,10 @@ This repository combines enterprise-grade architectural patterns to achieve 100%
 - **Data Transfer Objects (`CartDTO`):** Define JSON network/storage payload structures.
 - **Mappers (`CartMapper`):** Translate raw DTOs to rich `BudgetCart` domain entities at the infrastructure adapter boundary.
 
-#### 💡 Recap of Pattern 5: DTO & Mapper Isolation
+#### ✅ Pros & Architectural Advantages:
 
-> **Key Takeaway:** Network payloads change frequently. Mappers shield your domain models from backend schema changes, API versioning updates, or database column renames.
+- **API Schema Insulation:** Backend database or REST API schema changes only affect Mappers, protecting Domain Entities.
+- **Rich Domain Behavior:** Domain entities retain rich methods (`cart.getTotalSpent()`, `cart.getRemainingBudget()`) instead of remaining plain JSON data buckets.
 
 ---
 
@@ -74,9 +83,10 @@ This repository combines enterprise-grade architectural patterns to achieve 100%
 - `CompositionRoot.ts` in each application acts as the central Dependency Injection Container.
 - Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`DependencyContext.tsx`) or Zustand store, preserving strict architectural boundaries.
 
-#### 💡 Recap of Pattern 6: Composition Root
+#### ✅ Pros & Architectural Advantages:
 
-> **Key Takeaway:** Centralizing object instantiation at the entry point of your application prevents components from importing concrete adapters directly, guaranteeing 100% loose coupling.
+- **Zero Component Coupling:** Components and stores never import concrete adapters directly.
+- **Single Configuration Point:** Changing an infrastructure implementation (e.g. enabling a Mock API) happens in one central file.
 
 ---
 
@@ -118,7 +128,7 @@ clean-architecture-monorepo/
 │   ├── architecture.md
 │   └── tech-stack.md
 │
-├── packages/                               <-- SHARED HARDWARE-FREE DOMAIN & UTILITY PACKAGES
+├── packages/                               <-- SHARED DOMAIN & UTILITY PACKAGES
 │   ├── cart/                               <-- @clean/cart (Cart Bounded Context Package)
 │   │   ├── package.json
 │   │   └── src/
@@ -131,15 +141,15 @@ clean-architecture-monorepo/
 │   │       ├── domain/ (UserEntity, LoginUseCase)
 │   │       └── ports/ (AuthRepositoryPort)
 │   │
-│   ├── shared-logger/                      <-- @clean/logger (LoggerPort, ConsoleLoggerAdapter)
+│   ├── logger/                             <-- @clean/logger (LoggerPort, ConsoleLoggerAdapter)
 │   │   ├── package.json
 │   │   └── src/
 │   │
-│   ├── shared-telemetry/                   <-- @clean/telemetry (TelemetryPort, ConsoleTelemetryAdapter)
+│   ├── telemetry/                          <-- @clean/telemetry (TelemetryPort, ConsoleTelemetryAdapter)
 │   │   ├── package.json
 │   │   └── src/
 │   │
-│   └── shared-ui-logic/                    <-- @clean/ui-logic (useHeadlessSelect hook)
+│   └── ui-logic/                           <-- @clean/ui-logic (useHeadlessSelect hook)
 │       ├── package.json
 │       └── src/
 │

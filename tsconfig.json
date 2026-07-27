@@ -9,10 +9,11 @@
   "references": [
     { "path": "./packages/cart" },
     { "path": "./packages/auth" },
-    { "path": "./packages/shared-logger" },
-    { "path": "./packages/shared-telemetry" },
-    { "path": "./packages/shared-ui-logic" },
+    { "path": "./packages/logger" },
+    { "path": "./packages/telemetry" },
+    { "path": "./packages/ui-logic" },
     { "path": "./apps/web" },
-    { "path": "./apps/mobile" }
+    { "path": "./apps/mobile" },
+    { "path": "./apps/mock-api" }
   ]
 }
