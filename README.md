@@ -1,26 +1,64 @@
 # Clean Architecture Monorepo (`clean-architecture-monorepo`)
 
-A production-grade, multi-platform TypeScript monorepo demonstrating **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD Bounded Contexts)**, **Result Pattern**, **Headless UI State Hooks**, **Isomorphic MSW Network Mocking**, and **Nx Task Pipeline Orchestration**.
+A production-grade, multi-platform TypeScript monorepo demonstrating **Presentation Layer Pattern (Container/Presenter, Headless UI, Zustand Store)**, **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD Bounded Contexts)**, **Result Pattern**, **Isomorphic Network Mocking (MSW v2 & Express)**, and **Nx Task Pipeline Orchestration**.
 
 ---
 
 ## 📚 Documentation Index
 
-- 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Detailed guide on Hexagonal Architecture, DDD, Result Pattern, DTO isolation, and directory layout.
-- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Specifications for TypeScript 5.6, React 18, Vite 6, Nx 20, Vitest 4, and MSW 2.
+- 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Detailed guide on Presentation Pattern, Hexagonal Architecture, DDD, Result Pattern, DTO isolation, and directory layout.
+- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Specifications for TypeScript 5.6, React 18, Vite 6, Nx 20, Vitest 4, Zustand, ESLint 9, Prettier, and MSW 2.
 
 ---
 
 ## 🏛️ Key Architectural Patterns Demonstrated
 
-1. **Hexagonal Architecture (Ports & Adapters):** `@clean/cart` domain logic is 100% decoupled from Web DOM / React Native storage APIs via inbound/outbound ports.
-2. **DDD Bounded Contexts:** Code is partitioned vertically into domain packages (`@clean/cart`, `@clean/auth`) with typed domain errors.
-3. **Result / Either Functional Pattern:** Explicit `Result<T, E>` return types eliminate unhandled try/catch exceptions across use cases.
-4. **DTO & Mapper Isolation:** `CartDTO` and `CartMapper` isolate `BudgetCart` entities from JSON serialization structures.
-5. **Headless Presentational UI Hooks:** `@clean/ui-logic` exports platform-agnostic state hooks consumed by both Web (`apps/web`) and Mobile (`apps/mobile`).
-6. **Composition Root DI Container:** `CompositionRoot.ts` in each app wires platform adapters to domain use cases privately.
-7. **Isomorphic Network Mocking:** MSW v2 intercepts REST network requests during browser dev mode and Vitest test execution.
-8. **Nx Monorepo Orchestration:** Nx computation caching and dependency graph management across 7 workspace projects.
+### 1. Presentation Layer Pattern (Container / Presenter, Headless UI, & Zustand Store)
+
+- **Smart Container (`BudgetTrackerContainer.tsx`):** Orchestrates UI side-effects, notification subscriptions, and Zustand store dispatching.
+- **Dumb Presentational View (`BudgetTrackerView.tsx`):** Purely decorative React component receiving props (`cart`, `loading`, `toasts`, event handlers) with zero business logic.
+- **Headless UI State Hooks (`useHeadlessSelect.ts` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
+- **Presentation State Store (`useCartStore.ts`):** Lightweight Zustand store living in `apps/web/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases and updates UI state with returned `BudgetCart` domain entities.
+
+> 💡 **Recap of Pattern 1:** The Presentation Layer handles rendering and user interaction _only_. It consumes Use Cases as primary entry points and contains zero business rules or validation logic.
+
+---
+
+### 2. Hexagonal Architecture (Ports & Adapters)
+
+- **Domain Center:** Pure business entities (`BudgetCart`) and Use Cases (`AddItemUseCase`) have **zero dependencies** on React, DOM APIs (`window`, `localStorage`), or backend databases.
+- **Inbound Ports (Primary):** Use Case interfaces (`CartUseCase`, `AddItemUseCase`) invoked by Presentation Container components and Zustand stores.
+- **Outbound Ports (Secondary):** Infrastructure interfaces (`CartRepositoryPort`, `NotificationPort`, `LoggerPort`) implemented by concrete platform infrastructure adapters (`LocalStorageCartRepository`, `ToastNotificationAdapter`, `ConsoleLoggerAdapter`).
+
+> 💡 **Recap of Pattern 2:** Ports & Adapters decouple core domain logic from external frameworks, allowing you to swap infrastructure (e.g., LocalStorage vs HTTP REST vs React Native) without modifying business code.
+
+---
+
+### 3. Domain-Driven Design (DDD Bounded Contexts)
+
+- **Strategic Slicing:** Code is partitioned vertically into independent Bounded Context feature packages (`@clean/cart`, `@clean/auth`).
+- **Ubiquitous Language:** Domain entity names and use case operations (`BudgetCart.addItem()`, `AddItemUseCase`) match real-world business domain concepts directly.
+- **Typed Domain Errors:** Custom error classes (`BudgetExceededError`, `InvalidBudgetLimitError`) encapsulate domain validation failure rules cleanly.
+
+> 💡 **Recap of Pattern 3:** Slicing code into Bounded Context packages establishes clear ownership boundaries and provides the exact foundation required for micro-frontend (MFE) or microservice architecture.
+
+---
+
+### 4. Result / Either Functional Pattern
+
+- Replaces unhandled try/catch exception throwing with a type-safe `Result<T, E>` discriminated union (`ok()` and `fail()`).
+- Forces use case callers (UI containers and Zustand stores) to explicitly handle success and failure paths at compile time.
+
+> 💡 **Recap of Pattern 4:** Treating failure as a first-class return value eliminates uncaught runtime exceptions and makes error handling explicit in TypeScript signatures.
+
+---
+
+### 5. Composition Root Dependency Injection Container
+
+- `CompositionRoot.ts` in each application acts as the central Dependency Injection Container.
+- Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`DependencyContext.tsx`) or Zustand store, preserving strict architectural boundaries.
+
+> 💡 **Recap of Pattern 5:** Centralizing object instantiation at the application entry point prevents components from importing concrete adapters directly, guaranteeing loose coupling.
 
 ---
 
@@ -35,9 +73,9 @@ packages/
   └── shared-ui-logic/--> @clean/ui-logic (Platform-agnostic useHeadlessSelect)
 
 apps/
-  ├── web/            --> React 18 Web App (LocalStorage/HTTP Adapters, CompositionRoot)
+  ├── web/            --> React 18 Web App (Presentation Layer, Zustand Store, CompositionRoot)
   ├── mobile/         --> React Native Mobile App (AsyncStorage Adapter, Native Alert Adapter)
-  └── mock-api/       --> Standalone Express/TypeScript Mock API server (GET/PUT /api/carts/:id)
+  └── mock-api/       --> Standalone Express Mock REST Server (Port 4000)
 ```
 
 ---
@@ -58,51 +96,21 @@ npm test
 npx nx run-many -t test
 ```
 
-### 3. Run Web App Dev Server
+### 3. Run ESLint & Prettier
+
+```bash
+npm run lint
+npm run format
+```
+
+### 4. Run Web App Dev Server
 
 ```bash
 npm run dev -w web
 ```
 
-### 4. Visualize Nx Workspace Graph
+### 5. Visualize Nx Workspace Graph
 
 ```bash
 npx nx graph
 ```
-
----
-
-## 🔀 Mocking Strategy Templates (Branches)
-
-This repository demonstrates two different frontend mocking strategies. Switch between them by checking out their respective Git branches:
-
-### 1. Mock Service Worker (MSW) Interception
-
-Uses the browser's native Service Worker API to intercept requests inside the network layer.
-
-- **Best for:** Self-contained frontend prototyping, component/unit testing in Vitest, and zero-infrastructure QA testing.
-- **How to run:**
-  ```bash
-  git checkout main
-  npm install
-  npm run dev -w web
-  ```
-
-### 2. Standalone Mock API Server
-
-Uses a lightweight local Express/Node server running in `apps/mock-api` on port `4000` to serve actual HTTP requests over localhost.
-
-- **Best for:** Testing raw HTTP traffic/CORS setups, sharing mock data with mobile clients (`apps/mobile`) which don't support browser service workers, or deploying a mock backend container to dev/staging environments.
-- **How to run:**
-  ```bash
-  git checkout mock-api
-  npm install
-
-  # Start the Mock API server (running on port 4000)
-  npx nx run mock-api:dev
-
-  # Start the Web application (running on port 5173, queries port 4000)
-  npx nx run web:dev
-  ```
-
----

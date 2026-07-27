@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { type BudgetCart } from '@clean/cart';
 import { useDependencies } from './DependencyContext';
 import { BudgetTrackerView } from './BudgetTrackerView';
+import { useCartStore } from './store/useCartStore';
 
 type ToastMsg = {
   id: string;
@@ -10,34 +10,15 @@ type ToastMsg = {
 };
 
 export function BudgetTrackerContainer() {
-  const {
-    notificationAdapter,
-    cartUseCase,
-    addItemUseCase,
-    updateLimitUseCase,
-    removeItemUseCase,
-  } = useDependencies();
-
-  const [cart, setCart] = useState<BudgetCart | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { notificationAdapter } = useDependencies();
   const [toasts, setToasts] = useState<ToastMsg[]>([]);
 
+  // Consuming presentation state and actions from Zustand store
+  const { cart, loading, fetchCart, addItem, updateLimit, removeItem } = useCartStore();
+
   useEffect(() => {
-    let active = true;
-    async function initCart() {
-      const result = await cartUseCase.execute('default-planner');
-      if (active) {
-        if (result.ok) {
-          setCart(result.value);
-        }
-        setLoading(false);
-      }
-    }
-    initCart();
-    return () => {
-      active = false;
-    };
-  }, [cartUseCase]);
+    fetchCart('default-planner');
+  }, [fetchCart]);
 
   useEffect(() => {
     const unsubscribe = notificationAdapter.subscribe((message, type) => {
@@ -50,41 +31,14 @@ export function BudgetTrackerContainer() {
     return unsubscribe;
   }, [notificationAdapter]);
 
-  const handleAddItem = async (name: string, price: number, category: string) => {
-    setLoading(true);
-    const result = await addItemUseCase.execute('default-planner', name, price, category);
-    if (result.ok) {
-      setCart(result.value);
-    }
-    setLoading(false);
-  };
-
-  const handleUpdateLimit = async (limit: number) => {
-    setLoading(true);
-    const result = await updateLimitUseCase.execute('default-planner', limit);
-    if (result.ok) {
-      setCart(result.value);
-    }
-    setLoading(false);
-  };
-
-  const handleRemoveItem = async (itemId: string) => {
-    setLoading(true);
-    const result = await removeItemUseCase.execute('default-planner', itemId);
-    if (result.ok) {
-      setCart(result.value);
-    }
-    setLoading(false);
-  };
-
   return (
     <BudgetTrackerView
       cart={cart}
       loading={loading}
       toasts={toasts}
-      onAddItem={handleAddItem}
-      onUpdateLimit={handleUpdateLimit}
-      onRemoveItem={handleRemoveItem}
+      onAddItem={addItem}
+      onUpdateLimit={updateLimit}
+      onRemoveItem={removeItem}
     />
   );
 }

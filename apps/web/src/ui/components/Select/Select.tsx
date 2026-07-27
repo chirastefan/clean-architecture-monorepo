@@ -3,7 +3,7 @@ import {
   useHeadlessSelect,
   type UseHeadlessSelectOptions,
   type SelectOption,
-} from '@shared/ui-logic';
+} from '@clean/ui-logic';
 
 type SelectContextType = {
   isOpen: boolean;

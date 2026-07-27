@@ -9,6 +9,8 @@ build/
 **/build/
 .nx/
 .cache/
+*.tsbuildinfo
+**/*.tsbuildinfo
 
 # Testing & Coverage
 coverage/
