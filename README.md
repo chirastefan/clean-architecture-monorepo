@@ -11,41 +11,6 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Hexagonal
 
 ---
 
-## 🔀 Mocking Strategy Templates (Branches)
-
-This repository demonstrates two different frontend mocking strategies. Switch between them by checking out their respective Git branches:
-
-### 1. Mock Service Worker (MSW) Interception (on `main`)
-
-Uses the browser's native Service Worker API to intercept requests inside the network layer.
-
-- **Best for:** Self-contained frontend prototyping, component/unit testing in Vitest, and zero-infrastructure QA testing.
-- **How to run:**
-  ```bash
-  git checkout main
-  npm install
-  npm run dev -w web
-  ```
-
-### 2. Standalone Mock API Server (on your `mock-api` branch)
-
-Uses a lightweight local Express/Node server running in `apps/mock-api` on port `4000` to serve actual HTTP requests over localhost.
-
-- **Best for:** Testing raw HTTP traffic/CORS setups, sharing mock data with mobile clients (`apps/mobile`) which don't support browser service workers, or deploying a mock backend container to dev/staging environments.
-- **How to run:**
-  ```bash
-  git checkout mock-api
-  npm install
-
-  # Start the Mock API server (running on port 4000)
-  npx nx run mock-api:dev
-
-  # Start the Web application (running on port 5173, queries port 4000)
-  npx nx run web:dev
-  ```
-
----
-
 ## 🏛️ Key Architectural Patterns Demonstrated
 
 1. **Hexagonal Architecture (Ports & Adapters):** `@clean/cart` domain logic is 100% decoupled from Web DOM / React Native storage APIs via inbound/outbound ports.
@@ -104,3 +69,40 @@ npm run dev -w web
 ```bash
 npx nx graph
 ```
+
+---
+
+## 🔀 Mocking Strategy Templates (Branches)
+
+This repository demonstrates two different frontend mocking strategies. Switch between them by checking out their respective Git branches:
+
+### 1. Mock Service Worker (MSW) Interception
+
+Uses the browser's native Service Worker API to intercept requests inside the network layer.
+
+- **Best for:** Self-contained frontend prototyping, component/unit testing in Vitest, and zero-infrastructure QA testing.
+- **How to run:**
+  ```bash
+  git checkout main
+  npm install
+  npm run dev -w web
+  ```
+
+### 2. Standalone Mock API Server
+
+Uses a lightweight local Express/Node server running in `apps/mock-api` on port `4000` to serve actual HTTP requests over localhost.
+
+- **Best for:** Testing raw HTTP traffic/CORS setups, sharing mock data with mobile clients (`apps/mobile`) which don't support browser service workers, or deploying a mock backend container to dev/staging environments.
+- **How to run:**
+  ```bash
+  git checkout mock-api
+  npm install
+
+  # Start the Mock API server (running on port 4000)
+  npx nx run mock-api:dev
+
+  # Start the Web application (running on port 5173, queries port 4000)
+  npx nx run web:dev
+  ```
+
+---
