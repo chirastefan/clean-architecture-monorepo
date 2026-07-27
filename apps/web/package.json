@@ -9,27 +9,21 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@clean/auth": "*",
     "@clean/cart": "*",
+    "@clean/auth": "*",
     "@clean/logger": "*",
     "@clean/telemetry": "*",
     "@clean/ui-logic": "*",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "zustand": "^5.0.14"
+    "zustand": "^5.0.3"
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.2",
     "@vitejs/plugin-react": "^4.3.4",
     "jsdom": "^29.1.1",
-    "msw": "^2.15.0",
     "typescript": "~5.6.2",
     "vite": "^6.0.1",
     "vitest": "^4.1.10"
-  },
-  "msw": {
-    "workerDirectory": [
-      "public"
-    ]
   }
 }
