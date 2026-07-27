@@ -1,0 +1,113 @@
+/* Headless Select Component Glassmorphic CSS */
+
+.select-root {
+  position: relative;
+  width: 100%;
+  max-width: 220px;
+  font-family: 'Inter', sans-serif;
+  z-index: 100;
+}
+
+.select-trigger {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  padding: 10px 16px;
+  color: #f3f4f6;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: background 0.2s, border-color 0.2s, box-shadow 0.15s;
+  outline: none;
+}
+
+.select-trigger:hover,
+.select-trigger:focus-visible {
+  background: rgba(255, 255, 255, 0.09);
+  border-color: rgba(255, 255, 255, 0.15);
+}
+
+.select-trigger:focus-visible {
+  box-shadow: 0 0 0 2px #10b981;
+}
+
+.select-arrow {
+  font-size: 0.7rem;
+  color: #6b7280;
+  transition: transform 0.2s;
+}
+
+.select-trigger[aria-expanded="true"] .select-arrow {
+  transform: rotate(180deg);
+  color: #10b981;
+}
+
+/* Options Dropdown List */
+.select-options-list {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  width: 100%;
+  background: rgba(17, 24, 39, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  padding: 6px;
+  margin: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  animation: dropdownFadeIn 0.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    transform: translateY(-4px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.select-option-item {
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: #9ca3af;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.select-option-item[data-highlighted] {
+  background: rgba(255, 255, 255, 0.06);
+  color: #ffffff;
+}
+
+.select-option-item[aria-selected="true"] {
+  background: rgba(16, 185, 129, 0.1);
+  color: #34d399;
+  font-weight: 600;
+}
+
+.select-option-item[aria-selected="true"]::after {
+  content: '✓';
+  font-size: 0.8rem;
+  color: #10b981;
+}

@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Build & Output
+dist/
+**/dist/
+build/
+**/build/
+.nx/
+.cache/
+
+# Testing & Coverage
+coverage/
+**/coverage/
+.vitest/
+
+# OS & IDE
+.DS_Store
+*.pem
+.env
+.env.local
+.vscode/
+.idea/
+.nx

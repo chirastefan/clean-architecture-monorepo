@@ -1,0 +1,19 @@
+{
+  "name": "clean-architecture-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "test": "nx run-many -t test",
+    "build": "nx run-many -t build",
+    "graph": "nx graph"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "nx": "^20.3.0"
+  }
+}
