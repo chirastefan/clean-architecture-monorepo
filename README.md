@@ -34,7 +34,7 @@ Uses a lightweight local Express/Node server running in `apps/mock-api` on port 
 - **Best for:** Testing raw HTTP traffic/CORS setups, sharing mock data with mobile clients (`apps/mobile`) which don't support browser service workers, or deploying a mock backend container to dev/staging environments.
 - **How to run:**
   ```bash
-  git checkout <your-mock-api-branch>
+  git checkout mock-api
   npm install
 
   # Start the Mock API server (running on port 4000)
