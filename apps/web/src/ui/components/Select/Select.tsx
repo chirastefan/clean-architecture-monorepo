@@ -1,4 +1,4 @@
-import { createContext, useContext, type ReactNode } from 'react';
+import { createContext, useContext, useEffect, useRef, type ReactNode } from 'react';
 import {
   useHeadlessSelect,
   type UseHeadlessSelectOptions,
@@ -31,10 +31,24 @@ export interface SelectProps extends UseHeadlessSelectOptions {
 
 export function Select({ options, selectedValue, onChange, children, className }: SelectProps) {
   const headless = useHeadlessSelect({ options, selectedValue, onChange });
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (rootRef.current && !rootRef.current.contains(event.target as Node)) {
+        headless.close();
+      }
+    }
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [headless]);
 
   return (
     <SelectContext.Provider value={{ ...headless, options, selectedValue }}>
-      <div className={`select-root ${className || ''}`} onMouseLeave={headless.close}>
+      <div ref={rootRef} className={`select-root ${className || ''}`}>
         {children}
       </div>
     </SelectContext.Provider>

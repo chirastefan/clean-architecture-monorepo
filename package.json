@@ -8,6 +8,9 @@
     "apps/*"
   ],
   "scripts": {
+    "start": "npm run dev -w web",
+    "dev": "npm run dev -w web",
+    "dev:mock-api": "npm run dev -w mock-api",
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
     "lint": "eslint .",
