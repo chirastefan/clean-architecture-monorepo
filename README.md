@@ -1,13 +1,25 @@
 # Clean Architecture Monorepo (`clean-architecture-monorepo`)
 
-A production-grade, multi-platform TypeScript monorepo demonstrating **Presentation Layer Pattern (Container/Presenter, Headless UI, Zustand Store)**, **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD Bounded Contexts)**, **Result Pattern**, **Isomorphic Network Mocking (MSW v2 & Express)**, and **Nx Task Pipeline Orchestration**.
+A production-grade, multi-platform TypeScript monorepo demonstrating **Presentation Layer Pattern (Container/Presenter, Headless UI, Zustand Store)**, **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD Bounded Contexts)**, **Result Pattern**, **NestJS Mock API**, and **Nx Task Pipeline Orchestration**.
 
 ---
 
 ## 📚 Documentation Index
 
-- 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Detailed guide on Presentation Pattern, Hexagonal Architecture, DDD, Result Pattern, DTO isolation, and directory layout.
-- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Specifications for TypeScript 5.6, React 18, Vite 6, Nx 20, Vitest 4, Zustand, ESLint 9, Prettier, and MSW 2.
+- 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Comprehensive guide on Presentation Pattern, Hexagonal Architecture, DDD, Result Pattern, DTO isolation, and directory layout.
+- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Specifications for TypeScript 5.6, React 18, Vite 6, Nx 20, Vitest 4, Zustand, NestJS, ESLint 9, and Prettier.
+
+---
+
+## 🌟 Why Combined Hexagonal & DDD Architecture is the Enterprise Standard
+
+Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Adapters)**, and **Domain-Driven Design (DDD)** represents the industry gold standard for modern multi-platform frontend and full-stack software development:
+
+1. 📱 **Multi-Platform Delivery (Web & Mobile Share 100% Core Business Logic):** Pure hardware-free domain packages (`@clean/cart`) run on both React Web (`apps/web`) and React Native (`apps/mobile`) without duplicating business rules or validation logic.
+2. 🛡️ **Total Decoupling from Framework Volatility:** Insulates core business logic from UI framework updates (React 18 -> 19) or state management migrations (Redux -> Zustand). Frameworks sit on the outside as pluggable adapters.
+3. ⚡ **Lightning-Fast, Non-Flaky Unit Testing:** Business use cases (`AddItemUseCase.execute()`) run in pure Node.js memory in **under 3 milliseconds**, eliminating heavy UI DOM rendering in unit tests.
+4. 🧱 **Micro-Frontend (MFE) & Microservice Readiness:** Vertical package slicing by DDD Bounded Contexts (`@clean/cart`, `@clean/auth`) establishes strict encapsulation boundaries, making it effortless to extract packages into independent micro-frontends or microservices later.
+5. 🔒 **Type-Safe Operational Resilience (Result Pattern):** Explicit `Result<T, E>` unions force TypeScript callers to handle success and failure paths at compile time, eliminating uncaught runtime crashes.
 
 ---
 
@@ -77,7 +89,7 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Presentat
 #### ✅ Pros & Architectural Advantages:
 
 - **Zero Component Coupling:** Components and stores never import concrete adapters directly.
-- **Single Configuration Point:** Changing an infrastructure implementation (e.g. enabling a Mock API) happens in one central file.
+- **Single Configuration Point:** Changing an infrastructure implementation (e.g. enabling a NestJS Mock API) happens in one central file.
 
 ---
 
@@ -94,7 +106,7 @@ packages/
 apps/
   ├── web/         --> React 18 Web App (Presentation Layer, Zustand Store, CompositionRoot)
   ├── mobile/      --> React Native Mobile App (AsyncStorage Adapter, Native Alert Adapter)
-  └── mock-api/    --> Standalone Express Mock REST Server (Port 4000)
+  └── mock-api/    --> Standalone NestJS Mock REST Server (Port 4000)
 ```
 
 ---
@@ -130,7 +142,13 @@ npm start
 npm run dev -w web
 ```
 
-### 5. Visualize Nx Workspace Graph
+### 5. Run NestJS Mock API Server
+
+```bash
+npm run dev:mock-api
+```
+
+### 6. Visualize Nx Workspace Graph
 
 ```bash
 npx nx graph
