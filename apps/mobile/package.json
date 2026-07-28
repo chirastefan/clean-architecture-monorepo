@@ -14,11 +14,13 @@
     "@clean/ui-logic": "*",
     "@react-native-async-storage/async-storage": "^3.1.1",
     "expo": "~52.0.0",
+    "expo-asset": "^57.0.7",
     "expo-status-bar": "^57.0.1",
     "react": "18.3.1",
     "react-native": "0.76.7"
   },
   "devDependencies": {
+    "@expo/cli": "^0.22.28",
     "@types/react": "~18.3.12",
     "typescript": "~5.6.2",
     "vitest": "^4.1.10"

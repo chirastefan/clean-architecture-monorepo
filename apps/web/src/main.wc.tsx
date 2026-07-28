@@ -16,7 +16,7 @@ const ConnectedBudgetTracker = () => {
 
 // Create the Web Component using r2wc(Component, options)
 const BudgetTrackerWebComponent = r2wc(ConnectedBudgetTracker, {
-  props: {}, // Add any props here that you expect host applications (e.g. PHP) to pass down
+  props: {}, // Add any props here that you expect host applications
 });
 
 // Register it with the browser
