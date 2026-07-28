@@ -11,8 +11,5 @@
     "skipLibCheck": true,
     "strict": true
   },
-  "include": [
-    "packages/*/src/**/*",
-    "apps/*/src/**/*"
-  ]
+  "include": ["packages/*/src/**/*", "apps/*/src/**/*"]
 }

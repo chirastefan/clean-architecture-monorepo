@@ -1,11 +1,22 @@
 import { useEffect, useState } from 'react';
+import { useShallow } from 'zustand/react/shallow';
+
 import { useDependencies } from './dependency-context';
 import { BudgetTrackerView } from './budget-tracker-view';
 import { useCartStore } from './store/use-cart-store';
 
 export function BudgetTrackerContainer() {
   const { notificationAdapter } = useDependencies();
-  const { cart, loading, fetchCart, addItem, updateLimit, removeItem } = useCartStore();
+  const { cart, loading, fetchCart, addItem, updateLimit, removeItem } = useCartStore(
+    useShallow((state) => ({
+      cart: state.cart,
+      loading: state.loading,
+      fetchCart: state.fetchCart,
+      addItem: state.addItem,
+      updateLimit: state.updateLimit,
+      removeItem: state.removeItem,
+    }))
+  );
 
   const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: string }>>([]);
 

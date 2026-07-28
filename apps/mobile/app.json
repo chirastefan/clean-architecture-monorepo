@@ -7,10 +7,8 @@
     "userInterfaceStyle": "light",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "edgeToEdgeEnabled": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.anonymous.clean-architecture-mobile"
     }
   }
 }

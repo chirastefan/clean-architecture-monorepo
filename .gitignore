@@ -28,4 +28,6 @@ coverage/
 
 dist/
 dist-wc/
-.expo/
+**/.expo/
+apps/mobile/ios/
+apps/mobile/android/
