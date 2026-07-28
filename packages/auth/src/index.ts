@@ -1,3 +1,3 @@
-export { UserEntity } from './domain/entities/UserEntity';
-export { type AuthRepositoryPort } from './ports/AuthRepositoryPort';
-export { LoginUseCase } from './domain/useCases/LoginUseCase';
+export * from './domain/entities/user-entity';
+export * from './domain/use-cases/login-use-case';
+export * from './ports/auth-repository-port';

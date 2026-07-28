@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ConsoleTelemetryAdapter } from './ConsoleTelemetryAdapter';
+import { ConsoleTelemetryAdapter } from './console-telemetry-adapter';
 
-describe('Shared Telemetry Tests (@shared/telemetry)', () => {
-  it('should format telemetry events correctly', () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+describe('ConsoleTelemetryAdapter (packages/telemetry)', () => {
+  it('should format and track telemetry events', () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     const telemetry = new ConsoleTelemetryAdapter();
 
-    telemetry.trackEvent('item_added', { itemId: 'tx-1' });
+    telemetry.trackEvent('PAGE_VIEW', { page: '/dashboard' });
 
-    expect(spy).toHaveBeenCalledWith('[TELEMETRY EVENT] item_added', '{"itemId":"tx-1"}');
-    spy.mockRestore();
+    expect(consoleSpy).toHaveBeenCalledWith('[TELEMETRY EVENT] PAGE_VIEW', '{"page":"/dashboard"}');
+    consoleSpy.mockRestore();
   });
 });

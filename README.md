@@ -1,12 +1,14 @@
 # Clean Architecture Monorepo (`clean-architecture-monorepo`)
 
-A production-grade, multi-platform TypeScript monorepo demonstrating **Presentation Layer Pattern (Container/Presenter, Headless UI, Zustand Store)**, **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD Bounded Contexts)**, **Result Pattern**, **NestJS Mock API**, and **Nx Task Pipeline Orchestration**.
+A production-grade, multi-platform TypeScript monorepo demonstrating **Presentation Layer Pattern (Container/Presenter, Headless UI, Zustand Store)**, **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD Bounded Contexts)**, **Result Pattern**, **Dependency Injection (`di-container.ts`)**, **NestJS Mock API**, and **Nx Task Pipeline Orchestration**.
+
+> 💡 **Strict File Naming Convention:** 100% of workspace files and directories follow **kebab-case** (`di-container.ts`, `add-item-use-case.ts`, `budget-tracker-container.tsx`), eliminating cross-platform filesystem casing bugs on macOS, Linux CI/CD, and Windows.
 
 ---
 
 ## 📚 Documentation Index
 
-- 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Comprehensive guide on Presentation Pattern, Hexagonal Architecture, DDD, Result Pattern, DTO isolation, and directory layout.
+- 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Comprehensive guide on Presentation Pattern, Hexagonal Architecture, DDD, Result Pattern, DTO isolation, `di-container.ts`, and directory layout.
 - 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Specifications for TypeScript 5.6, React 18, Vite 6, Nx 20, Vitest 4, Zustand, NestJS, ESLint 9, and Prettier.
 
 ---
@@ -27,10 +29,10 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 
 ### 1. Presentation Layer Pattern (Container / Presenter, Headless UI, & Zustand Store)
 
-- **Smart Container (`BudgetTrackerContainer.tsx`):** Orchestrates UI side-effects, notification subscriptions, and Zustand store dispatching.
-- **Dumb Presentational View (`BudgetTrackerView.tsx`):** Purely decorative React component receiving props (`cart`, `loading`, `toasts`, event handlers) with zero business logic.
-- **Headless UI State Hooks (`useHeadlessSelect.ts` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
-- **Presentation State Store (`useCartStore.ts`):** Lightweight Zustand store living in `apps/web/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases and updates UI state with returned `BudgetCart` domain entities.
+- **Smart Container (`budget-tracker-container.tsx`):** Orchestrates UI side-effects, notification subscriptions, and Zustand store dispatching.
+- **Dumb Presentational View (`budget-tracker-view.tsx`):** Purely decorative React component receiving props (`cart`, `loading`, `toasts`, event handlers) with zero business logic.
+- **Headless UI State Hooks (`use-headless-select.ts` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
+- **Presentation State Store (`use-cart-store.ts`):** Lightweight Zustand store living in `apps/web/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases and updates UI state with returned `BudgetCart` domain entities.
 
 #### ✅ Pros & Architectural Advantages:
 
@@ -81,10 +83,10 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 
 ---
 
-### 5. Composition Root Dependency Injection Container
+### 5. Dependency Injection Container (`di-container.ts`)
 
-- `CompositionRoot.ts` in each application acts as the central Dependency Injection Container.
-- Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`DependencyContext.tsx`) or Zustand store, preserving strict architectural boundaries.
+- `di-container.ts` in each application acts as the central Dependency Injection (DI) Container.
+- Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`dependency-context.tsx`) or Zustand store (`use-cart-store.ts`), preserving strict architectural boundaries.
 
 #### ✅ Pros & Architectural Advantages:
 
@@ -97,15 +99,15 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 
 ```
 packages/
-  ├── cart/        --> @clean/cart (BudgetCart Entity, Use Cases, Typed Errors)
-  ├── auth/        --> @clean/auth (User Entity, Login Use Case)
-  ├── logger/      --> @clean/logger (LoggerPort, ConsoleLoggerAdapter)
-  ├── telemetry/   --> @clean/telemetry (TelemetryPort, ConsoleTelemetryAdapter)
-  └── ui-logic/    --> @clean/ui-logic (Platform-agnostic useHeadlessSelect)
+  ├── cart/        --> @clean/cart (budget-cart.ts, add-item-use-case.ts)
+  ├── auth/        --> @clean/auth (user-entity.ts, login-use-case.ts)
+  ├── logger/      --> @clean/logger (logger-port.ts, console-logger-adapter.ts)
+  ├── telemetry/   --> @clean/telemetry (telemetry-port.ts, console-telemetry-adapter.ts)
+  └── ui-logic/    --> @clean/ui-logic (use-headless-select.ts)
 
 apps/
-  ├── web/         --> React 18 Web App (Presentation Layer, Zustand Store, CompositionRoot)
-  ├── mobile/      --> React Native Mobile App (AsyncStorage Adapter, Native Alert Adapter)
+  ├── web/         --> React 18 Web App (Presentation Layer, Zustand Store, di-container.ts)
+  ├── mobile/      --> React Native Mobile App (AsyncStorage Adapter, di-container.ts)
   └── mock-api/    --> Standalone NestJS Mock REST Server (Port 4000)
 ```
 

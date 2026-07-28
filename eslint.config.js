@@ -6,9 +6,15 @@ import prettierConfig from 'eslint-config-prettier';
 export default tseslint.config(
   {
     ignores: [
+      'node_modules/**',
       '**/node_modules/**',
+      'dist/**',
       '**/dist/**',
+      'dist-wc/**',
+      '**/dist-wc/**',
+      'build/**',
       '**/build/**',
+      '.nx/**',
       '**/.nx/**',
       'public/mockServiceWorker.js',
     ],

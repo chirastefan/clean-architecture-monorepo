@@ -1,5 +1,1 @@
-export {
-  useHeadlessSelect,
-  type SelectOption,
-  type UseHeadlessSelectOptions,
-} from './useHeadlessSelect';
+export * from './use-headless-select';

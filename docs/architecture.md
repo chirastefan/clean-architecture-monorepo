@@ -13,9 +13,9 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 #### 1. Multi-Platform Delivery (React Web & React Native Share 100% Business Logic)
 
 - **The Legacy Problem:** In standard React apps, API calls, state management, and business rules are tightly coupled inside React components or hooks. Porting to mobile requires duplicating business logic across web and mobile codebases.
-- **The Hexagonal Solution:** Core business entities (`BudgetCart`) and use cases (`AddItemUseCase`) live in pure hardware-free packages (`@clean/cart`) with **zero dependencies on React, Web DOM (`window`), or React Native**.
-  - `apps/web` implements `LocalStorageCartRepository` & `ToastNotificationAdapter`.
-  - `apps/mobile` implements `AsyncStorageCartRepository` & `NativeAlertNotificationAdapter`.
+- **The Hexagonal Solution:** Core business entities (`budget-cart.ts`) and use cases (`add-item-use-case.ts`) live in pure hardware-free packages (`@clean/cart`) with **zero dependencies on React, Web DOM (`window`), or React Native**.
+  - `apps/web` implements `local-storage-cart-repository.ts` & `toast-notification-adapter.ts`.
+  - `apps/mobile` implements `async-storage-cart-repository.ts` & `native-alert-notification-adapter.ts`.
   - Both platforms consume **100% identical domain logic and use cases**, eliminating code duplication.
 
 #### 2. Total Decoupling from Framework Volatility
@@ -46,10 +46,10 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 
 ### 1. Presentation Layer Pattern (Container / Presenter, Headless UI, & Presentation Stores)
 
-- **Smart Container Component (`BudgetTrackerContainer.tsx`):** Handles presentation side-effects, subscribes to notification adapters, and orchestrates UI state via Zustand (`useCartStore.ts`) or React hooks.
-- **Dumb Presentational View (`BudgetTrackerView.tsx`):** Purely decorative React component receiving props (`cart`, `loading`, `toasts`, event handlers). Contains zero business logic, enabling instant snapshot testing and design iteration.
-- **Headless UI State Hooks (`useHeadlessSelect.ts` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
-- **Presentation State Store (`useCartStore.ts`):** Lightweight Zustand store living inside `apps/web/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases and updates UI state with returned `BudgetCart` domain entities.
+- **Smart Container Component (`budget-tracker-container.tsx`):** Handles presentation side-effects, subscribes to notification adapters, and orchestrates UI state via Zustand (`use-cart-store.ts`) or React hooks.
+- **Dumb Presentational View (`budget-tracker-view.tsx`):** Purely decorative React component receiving props (`cart`, `loading`, `toasts`, event handlers). Contains zero business logic, enabling instant snapshot testing and design iteration.
+- **Headless UI State Hooks (`use-headless-select.ts` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
+- **Presentation State Store (`use-cart-store.ts`):** Lightweight Zustand store living inside `apps/web/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases and updates UI state with returned `BudgetCart` domain entities.
 
 #### ✅ Pros & Architectural Advantages:
 
@@ -102,8 +102,8 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 
 ### 5. DTO & Mapper Translation Layer
 
-- **Data Transfer Objects (`CartDTO`):** Define JSON network/storage payload structures.
-- **Mappers (`CartMapper`):** Translate raw DTOs to rich `BudgetCart` domain entities at the infrastructure adapter boundary.
+- **Data Transfer Objects (`cart-dto.ts`):** Define JSON network/storage payload structures.
+- **Mappers (`cart-mapper.ts`):** Translate raw DTOs to rich `BudgetCart` domain entities at the infrastructure adapter boundary.
 
 #### ✅ Pros & Architectural Advantages:
 
@@ -112,15 +112,15 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 
 ---
 
-### 6. Composition Root Dependency Injection Container
+### 6. Dependency Injection Container (`di-container.ts`)
 
-- `CompositionRoot.ts` in each application acts as the central Dependency Injection Container.
-- Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`DependencyContext.tsx`) or Zustand store, preserving strict architectural boundaries.
+- `di-container.ts` in each application acts as the central Dependency Injection (DI) Container.
+- Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`dependency-context.tsx`) or Zustand store (`use-cart-store.ts`), preserving strict architectural boundaries.
 
 #### ✅ Pros & Architectural Advantages:
 
 - **Zero Component Coupling:** Components and stores never import concrete adapters directly.
-- **Single Configuration Point:** Changing an infrastructure implementation (e.g. enabling a Mock API) happens in one central file.
+- **Single Configuration Point:** Changing an infrastructure implementation (e.g. enabling a NestJS Mock API) happens in one central file.
 
 ---
 
@@ -150,7 +150,7 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 
 ---
 
-## 📂 Repository Directory Layout
+## 📂 Repository Directory Layout (Strict Kebab-Case)
 
 ```
 clean-architecture-monorepo/
@@ -166,46 +166,49 @@ clean-architecture-monorepo/
 │   ├── cart/                               <-- @clean/cart (Cart Bounded Context Package)
 │   │   ├── package.json
 │   │   └── src/
-│   │       ├── domain/ (BudgetCart, BudgetExceededError, Result, UseCases)
-│   │       └── ports/ (CartRepositoryPort, NotificationPort, etc.)
+│   │       ├── domain/
+│   │       │   ├── entities/ (budget-cart.ts, budget-cart.test.ts)
+│   │       │   ├── errors/ (budget-exceeded-error.ts, domain-error.ts)
+│   │       │   ├── result/ (result.ts)
+│   │       │   └── use-cases/ (add-item-use-case.ts, cart-use-case.ts, etc.)
+│   │       └── ports/ (cart-repository-port.ts, notification-port.ts, etc.)
 │   │
 │   ├── auth/                               <-- @clean/auth (Auth Bounded Context Package)
 │   │   ├── package.json
 │   │   └── src/
-│   │       ├── domain/ (UserEntity, LoginUseCase)
-│   │       └── ports/ (AuthRepositoryPort)
+│   │       ├── domain/ (user-entity.ts, login-use-case.ts)
+│   │       └── ports/ (auth-repository-port.ts)
 │   │
-│   ├── logger/                             <-- @clean/logger (LoggerPort, ConsoleLoggerAdapter)
+│   ├── logger/                             <-- @clean/logger (logger-port.ts, console-logger-adapter.ts)
 │   │   ├── package.json
 │   │   └── src/
 │   │
-│   ├── telemetry/                          <-- @clean/telemetry (TelemetryPort, ConsoleTelemetryAdapter)
+│   ├── telemetry/                          <-- @clean/telemetry (telemetry-port.ts, console-telemetry-adapter.ts)
 │   │   ├── package.json
 │   │   └── src/
 │   │
-│   └── ui-logic/                           <-- @clean/ui-logic (useHeadlessSelect hook)
+│   └── ui-logic/                           <-- @clean/ui-logic (use-headless-select.ts)
 │       ├── package.json
 │       └── src/
 │
 └── apps/                                   <-- PLATFORM CONSUMPTION APPS
     ├── web/                                <-- REACT WEB APPLICATION
     │   ├── package.json
-    │   ├── public/ (mockServiceWorker.js)
     │   └── src/
-    │       ├── adapters/ (LocalStorage, HttpCart, CachedHttp, Toast)
+    │       ├── adapters/ (local-storage-cart-repository.ts, cached-http-cart-repository.ts)
     │       └── ui/
-    │           ├── store/ (useCartStore.ts - Zustand Presentation Store)
-    │           ├── CompositionRoot.ts (Dependency Injection Container)
-    │           ├── BudgetTrackerContainer.tsx (Smart Container Component)
-    │           └── BudgetTrackerView.tsx (Dumb Presentational View Component)
+    │           ├── store/ (use-cart-store.ts - Zustand Presentation Store)
+    │           ├── di-container.ts (Dependency Injection Container)
+    │           ├── budget-tracker-container.tsx (Smart Container Component)
+    │           └── budget-tracker-view.tsx (Dumb Presentational View Component)
     │
     ├── mobile/                             <-- REACT NATIVE MOBILE APPLICATION
     │   ├── package.json
     │   └── src/
-    │       ├── adapters/ (AsyncStorageCartRepository, NativeAlertAdapter)
-    │       └── ui/ (Mobile CompositionRoot)
+    │       ├── adapters/ (async-storage-cart-repository.ts, native-alert-notification-adapter.ts)
+    │       └── ui/ (di-container.ts)
     │
     └── mock-api/                           <-- NESTJS STANDALONE MOCK REST SERVER
         ├── package.json
-        └── src/ (AppModule, CartController, CartService listening on Port 4000)
+        └── src/ (app.module.ts, main.ts, cart/cart.controller.ts, cart/cart.service.ts)
 ```

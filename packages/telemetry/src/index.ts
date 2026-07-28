@@ -1,2 +1,2 @@
-export { type TelemetryPort } from './TelemetryPort';
-export { ConsoleTelemetryAdapter } from './ConsoleTelemetryAdapter';
+export * from './telemetry-port';
+export * from './console-telemetry-adapter';

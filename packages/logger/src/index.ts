@@ -1,2 +1,2 @@
-export { type LoggerPort } from './LoggerPort';
-export { ConsoleLoggerAdapter } from './ConsoleLoggerAdapter';
+export * from './logger-port';
+export * from './console-logger-adapter';

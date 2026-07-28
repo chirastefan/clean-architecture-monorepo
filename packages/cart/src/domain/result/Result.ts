@@ -1,4 +1,4 @@
-import { DomainError } from '../errors/DomainError';
+import { DomainError } from '../errors/domain-error';
 
 export type Result<T, E extends DomainError = DomainError> =
   { ok: true; value: T } | { ok: false; error: E };

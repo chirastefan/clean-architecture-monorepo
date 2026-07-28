@@ -1,21 +1,18 @@
-import { BudgetTrackerContainer } from './ui/BudgetTrackerContainer';
-import { DependencyProvider } from './ui/DependencyContext';
-import './ui/styles/Dashboard.css';
-import './App.css';
+import { DependencyProvider } from './ui/dependency-context';
+import { BudgetTrackerContainer } from './ui/budget-tracker-container';
+import './app.css';
 
-function App() {
+export function App() {
   return (
     <DependencyProvider>
-      <div className="dashboard-container">
-        <header className="dashboard-header">
-          <h1>DDD Feature Packages Monorepo</h1>
-          <p className="subtitle">
-            Consuming <code>@domain/cart</code> and <code>@domain/auth</code> feature packages
-            directly inside apps/web.
-          </p>
+      <div className="app-shell">
+        <header className="app-header">
+          <div className="app-title-group">
+            <h1>Clean Architecture Monorepo</h1>
+            <span className="architecture-tag">Hexagonal • DDD • Result Pattern</span>
+          </div>
         </header>
-
-        <main className="dashboard-main">
+        <main className="app-main">
           <BudgetTrackerContainer />
         </main>
       </div>

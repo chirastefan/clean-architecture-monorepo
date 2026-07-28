@@ -1,14 +1,14 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ConsoleLoggerAdapter } from './ConsoleLoggerAdapter';
+import { ConsoleLoggerAdapter } from './console-logger-adapter';
 
-describe('Shared Logger Tests (@shared/logger)', () => {
-  it('should format info logs correctly', () => {
-    const spy = vi.spyOn(console, 'log').mockImplementation(() => {});
+describe('ConsoleLoggerAdapter (packages/logger)', () => {
+  it('should format and print info logs correctly', () => {
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
     const logger = new ConsoleLoggerAdapter();
 
-    logger.info('User logged in', { userId: '123' });
+    logger.info('Test Log', { key: 'val' });
 
-    expect(spy).toHaveBeenCalledWith('[INFO] User logged in', '{"userId":"123"}');
-    spy.mockRestore();
+    expect(consoleSpy).toHaveBeenCalledWith('[INFO] Test Log', '{"key":"val"}');
+    consoleSpy.mockRestore();
   });
 });
