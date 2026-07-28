@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import { type MobileDependencies, createMobileDependencies } from './ui/di-container';
+import { type MobileDependencies, createMobileDependencies } from './di-container';
 
 describe('React Native Mobile Architecture Integration Tests (apps/mobile)', () => {
   let mobileDependencies: MobileDependencies;

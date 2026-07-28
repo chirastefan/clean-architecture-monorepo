@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { BudgetCart } from './entities/budget-cart';
-import { BudgetExceededError } from './errors/budget-exceeded-error';
+import { BudgetExceededError } from '../errors/budget-exceeded-error';
+import { BudgetCart } from './budget-cart';
 
 describe('BudgetCart Domain Entity (packages/cart)', () => {
   it('should calculate total spent and remaining budget correctly', () => {
