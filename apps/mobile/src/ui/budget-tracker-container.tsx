@@ -2,23 +2,22 @@ import { useEffect } from 'react';
 import { useShallow } from 'zustand/react/shallow';
 
 import { BudgetTrackerView } from './budget-tracker-view';
-import { useMobileCartStore } from './store/use-cart-store';
+import { useCartStore } from './store/use-cart-store';
 
 const CART_ID = 'default-planner';
 
 export function BudgetTrackerContainer() {
-  const { cart, loading, errorMessage, loadCart, addItem, updateLimit, removeItem } =
-    useMobileCartStore(
-      useShallow((state) => ({
-        cart: state.cart,
-        loading: state.loading,
-        errorMessage: state.errorMessage,
-        loadCart: state.loadCart,
-        addItem: state.addItem,
-        updateLimit: state.updateLimit,
-        removeItem: state.removeItem,
-      }))
-    );
+  const { cart, loading, errorMessage, loadCart, addItem, updateLimit, removeItem } = useCartStore(
+    useShallow((state) => ({
+      cart: state.cart,
+      loading: state.loading,
+      errorMessage: state.errorMessage,
+      loadCart: state.loadCart,
+      addItem: state.addItem,
+      updateLimit: state.updateLimit,
+      removeItem: state.removeItem,
+    }))
+  );
 
   useEffect(() => {
     void loadCart(CART_ID);

@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { type BudgetCart } from '@clean/cart';
 import { createMobileDependencies, type MobileDependencies } from '../di-container';
 
-export interface MobileCartStoreState {
+export interface CartStoreState {
   cart: BudgetCart | null;
   loading: boolean;
   errorMessage: string | null;
@@ -12,8 +12,8 @@ export interface MobileCartStoreState {
   removeItem: (cartId: string, itemId: string) => Promise<void>;
 }
 
-export const createMobileCartStore = (deps: MobileDependencies = createMobileDependencies()) =>
-  create<MobileCartStoreState>((set) => ({
+export const createCartStore = (deps: MobileDependencies = createMobileDependencies()) =>
+  create<CartStoreState>((set) => ({
     cart: null,
     loading: false,
     errorMessage: null,
@@ -63,4 +63,4 @@ export const createMobileCartStore = (deps: MobileDependencies = createMobileDep
     },
   }));
 
-export const useMobileCartStore = createMobileCartStore();
+export const useCartStore = createCartStore();
