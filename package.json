@@ -10,6 +10,9 @@
   "scripts": {
     "start": "npm run dev -w web",
     "dev": "npm run dev -w web",
+    "dev:mobile": "npm run start -w mobile",
+    "android": "npm run android -w mobile",
+    "ios": "npm run ios -w mobile",
     "dev:mock-api": "npm run dev -w mock-api",
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
@@ -19,8 +22,10 @@
     "graph": "nx graph"
   },
   "devDependencies": {
-    "@types/react": "^18.3.18",
+    "@types/node": "^26.1.2",
+    "@types/react": "^18.3.31",
     "@types/react-dom": "^18.3.5",
+    "debug": "^4.4.3",
     "eslint": "^9.20.0",
     "eslint-config-prettier": "^10.0.0",
     "eslint-plugin-react": "^7.37.5",

@@ -1,7 +1,16 @@
-import { describe, it, expect } from 'vitest';
-import { mobileDependencies } from './ui/di-container';
+import { beforeEach, describe, expect, it } from 'vitest';
+import { type MobileDependencies, createMobileDependencies } from './ui/di-container';
 
 describe('React Native Mobile Architecture Integration Tests (apps/mobile)', () => {
+  let mobileDependencies: MobileDependencies;
+
+  beforeEach(() => {
+    mobileDependencies = createMobileDependencies({
+      generateId: () => 'mobile-item-1',
+      now: () => 1_700_000_000_000,
+    });
+  });
+
   it('should initialize mobile dependency injection container cleanly', () => {
     expect(mobileDependencies.cartUseCase).toBeDefined();
     expect(mobileDependencies.addItemUseCase).toBeDefined();

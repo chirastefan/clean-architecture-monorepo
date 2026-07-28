@@ -3,17 +3,16 @@
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "types": ["vite/client", "node"],
+    "noEmit": true,
     "skipLibCheck": true,
     "strict": true
   },
-  "references": [
-    { "path": "./packages/cart" },
-    { "path": "./packages/auth" },
-    { "path": "./packages/logger" },
-    { "path": "./packages/telemetry" },
-    { "path": "./packages/ui-logic" },
-    { "path": "./apps/web" },
-    { "path": "./apps/mobile" },
-    { "path": "./apps/mock-api" }
+  "include": [
+    "packages/*/src/**/*",
+    "apps/*/src/**/*"
   ]
 }

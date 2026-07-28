@@ -1,12 +1,11 @@
 {
   "compilerOptions": {
-    "composite": true,
-    "noEmit": true,
     "target": "ES2022",
     "useDefineForClassFields": true,
     "lib": ["ES2022", "DOM", "DOM.Iterable"],
     "module": "ESNext",
     "types": ["vite/client"],
+    "noEmit": true,
     "skipLibCheck": true,
 
     /* Bundler mode */

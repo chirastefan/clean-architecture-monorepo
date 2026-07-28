@@ -2,19 +2,24 @@
   "name": "mobile",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
-    "test": "vitest run"
+    "start": "expo start",
+    "test": "vitest run src/"
   },
   "dependencies": {
-    "@clean/cart": "*",
     "@clean/auth": "*",
+    "@clean/cart": "*",
     "@clean/logger": "*",
     "@clean/telemetry": "*",
     "@clean/ui-logic": "*",
-    "react": "^18.3.1"
+    "@react-native-async-storage/async-storage": "^3.1.1",
+    "expo": "~52.0.0",
+    "expo-status-bar": "^57.0.1",
+    "react": "18.3.1",
+    "react-native": "0.76.7"
   },
   "devDependencies": {
+    "@types/react": "~18.3.12",
     "typescript": "~5.6.2",
     "vitest": "^4.1.10"
   }

@@ -150,7 +150,21 @@ npm run dev -w web
 npm run dev:mock-api
 ```
 
-### 6. Visualize Nx Workspace Graph
+### 6. Run Mobile App with Expo
+
+Install Expo Go on a phone, then run:
+
+```bash
+npm run dev:mobile
+```
+
+Scan the QR code from Expo Go. Phone and development machine should be on the same
+network. For local simulators, use `npm run ios` or `npm run android`.
+
+Mobile data is persisted with AsyncStorage and uses the same `@clean/cart` entities
+and use cases as the web app.
+
+### 7. Visualize Nx Workspace Graph
 
 ```bash
 npx nx graph
