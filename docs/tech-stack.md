@@ -4,25 +4,44 @@ This document outlines the core technology stack, tools, and execution environme
 
 ---
 
-## 1. Core Stack
+## 🔗 Documentation Links
+
+- 🏠 **[Project Readme](../README.md)** — Quickstart guide, test commands, and overview.
+- 📐 **[System Architecture Guide](architecture.md)** — Deep-dive reference on Hexagonal Architecture, DDD, and UI Patterns.
+
+---
+
+## 1. Core Stack & Frameworks
 
 - **Language:** TypeScript 5.6+ (Strict mode, ES2022 target, Bundler module resolution)
-- **Framework:** React 18.3+ (JSX transform `"jsx": "react-jsx"`, React Hooks, Suspense)
-- **Bundler & Dev Server:** Vite 6.0+ (Lightning-fast HMR, ES module loading)
-- **Monorepo Engine:** Nx 20.8+ (Computation caching, task pipeline graph, `nx run-many`)
+- **Web App:** React 18.3+ (Vite 6, JSX transform `"jsx": "react-jsx"`, React Hooks)
+- **Mobile App:** React Native 0.76+ & Expo 52+ (Native components, AsyncStorage)
+- **Mock Backend:** NestJS 10+ (`@nestjs/core`, `@nestjs/common`, Port 4000)
+- **Bundler & Dev Server:** Vite 6.0+ (Web HMR and Web Component bundling with `@r2wc/react-to-web-component`)
+- **Monorepo & Build Pipeline:** Nx 20.8+ (Computation caching, task pipeline graph, `nx run-many`)
 - **Workspace Engine:** npm Workspaces (`workspaces: ["packages/*", "apps/*"]`)
 
 ---
 
-## 2. Testing & Network Mocking
+## 2. State Management & Presentation Patterns
 
-- **Test Runner:** Vitest 4.1+ (Unit & Integration testing, JSDOM environment)
-- **Network Mocking:** MSW 2.15+ (Mock Service Worker — Isomorphic REST API interception for CSR and SSR/Vitest)
+- **UI State Management:** Zustand 4.5+ (With `useShallow` for optimized component re-rendering)
+- **Headless UI Pattern:** Custom headless hooks (`useHeadlessSelect` in `@clean/ui-logic`)
+- **Container / Presenter Pattern:** Smart Container components (`BudgetTrackerContainer`) and Dumb Views (`BudgetTrackerView`)
 
 ---
 
-## 3. Architectural Design Patterns
+## 3. Testing & Code Quality
 
-- **Domain-Driven Design (DDD):** Strategic Bounded Contexts (`packages/cart`, `packages/auth`)
-- **Hexagonal Architecture (Ports & Adapters):** Strict inbound/outbound ports decoupling domain entities from React DOM/Storage APIs
-- **Headless Presentational UI Hooks:** Platform-agnostic state hooks in `@shared/ui-logic` consumed by both Web and Mobile apps
+- **Test Runner:** Vitest 4.1+ (Unit & Integration testing across all 7 workspace projects)
+- **Linter & Formatter:** ESLint 9+ (Flat config `eslint.config.js`) & Prettier (Strict 100 print width, 2-space tab width)
+- **Naming Convention:** 100% strict `kebab-case` for all workspace files and directories
+
+---
+
+## 4. Architectural Design Patterns
+
+- **Domain-Driven Design (DDD):** Strategic Bounded Context packages (`@clean/cart`, `@clean/auth`)
+- **Hexagonal Architecture (Ports & Adapters):** Inbound Ports (Use Cases), Outbound Ports (Repository Interfaces), and Infrastructure Adapters (`LocalStorageCartRepository`, `AsyncStorageCartRepository`)
+- **Dependency Injection (DI):** `di-container.ts` composition root instantiating adapters and injecting into use cases
+- **Result Pattern:** Type-safe `Result<T, E>` discriminated unions replacing unhandled exception throwing

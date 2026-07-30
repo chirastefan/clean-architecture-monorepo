@@ -1,114 +1,44 @@
 # Clean Architecture Monorepo (`clean-architecture-monorepo`)
 
-A production-grade, multi-platform TypeScript monorepo demonstrating **Presentation Layer Pattern (Container/Presenter, Headless UI, Zustand Store)**, **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD Bounded Contexts)**, **Result Pattern**, **Dependency Injection (`di-container.ts`)**, **NestJS Mock API**, and **Nx Task Pipeline Orchestration**.
+A production-grade, multi-platform TypeScript monorepo demonstrating **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD)**, **Presentation Layer Patterns**, and **Multi-Platform Delivery (Web, Mobile & Backend)**.
 
 > 💡 **Strict File Naming Convention:** 100% of workspace files and directories follow **kebab-case** (`di-container.ts`, `add-item-use-case.ts`, `budget-tracker-container.tsx`), eliminating cross-platform filesystem casing bugs on macOS, Linux CI/CD, and Windows.
 
 ---
 
-## 📚 Documentation Index
+## 📚 Architectural & Technical Documentation
 
-- 📐 **[System Architecture & Design Patterns Guide](docs/architecture.md)** — Comprehensive guide on Presentation Pattern, Hexagonal Architecture, DDD, Result Pattern, DTO isolation, `di-container.ts`, and directory layout.
-- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Specifications for TypeScript 5.6, React 18, Vite 6, Nx 20, Vitest 4, Zustand, NestJS, ESLint 9, and Prettier.
+All deep-dive system architecture, layer diagrams, and technical references are maintained in the `docs/` directory:
 
----
-
-## 🌟 Why Combined Hexagonal & DDD Architecture is the Enterprise Standard
-
-Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Adapters)**, and **Domain-Driven Design (DDD)** represents the industry gold standard for modern multi-platform frontend and full-stack software development:
-
-1. 📱 **Multi-Platform Delivery (Web & Mobile Share 100% Core Business Logic):** Pure hardware-free domain packages (`@clean/cart`) run on both React Web (`apps/web`) and React Native (`apps/mobile`) without duplicating business rules or validation logic.
-2. 🛡️ **Total Decoupling from Framework Volatility:** Insulates core business logic from UI framework updates (React 18 -> 19) or state management migrations (Redux -> Zustand). Frameworks sit on the outside as pluggable adapters.
-3. ⚡ **Lightning-Fast, Non-Flaky Unit Testing:** Business use cases (`AddItemUseCase.execute()`) run in pure Node.js memory in **under 3 milliseconds**, eliminating heavy UI DOM rendering in unit tests.
-4. 🧱 **Micro-Frontend (MFE) & Microservice Readiness:** Vertical package slicing by DDD Bounded Contexts (`@clean/cart`, `@clean/auth`) establishes strict encapsulation boundaries, making it effortless to extract packages into independent micro-frontends or microservices later.
-5. 🔒 **Type-Safe Operational Resilience (Result Pattern):** Explicit `Result<T, E>` unions force TypeScript callers to handle success and failure paths at compile time, eliminating uncaught runtime crashes.
+- 📐 **[System Architecture Guide](docs/architecture.md)** — Comprehensive reference on Hexagonal Architecture (Inbound/Outbound Ports), Domain-Driven Design, UI Presentation Patterns, Layer Maps, and Directory Structure.
+- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Core stack specifications for TypeScript 5.6, React 18, Expo 52, NestJS 10, Vite 6, Nx 20, Vitest 4, and Zustand.
 
 ---
 
-## 🏛️ Key Architectural Patterns Demonstrated
+## 🌟 Key Architecture Highlights
 
-### 1. Presentation Layer Pattern (Container / Presenter, Headless UI, & Zustand Store)
-
-- **Smart Container (`budget-tracker-container.tsx`):** Orchestrates UI side-effects, notification subscriptions, and Zustand store dispatching.
-- **Dumb Presentational View (`budget-tracker-view.tsx`):** Purely decorative React component receiving props (`cart`, `loading`, `toasts`, event handlers) with zero business logic.
-- **Headless UI State Hooks (`use-headless-select.ts` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
-- **Presentation State Store (`use-cart-store.ts`):** Lightweight Zustand store living in `apps/web/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases and updates UI state with returned `BudgetCart` domain entities.
-
-#### ✅ Pros & Architectural Advantages:
-
-- **Separation of Concerns:** View components remain 100% decorative and reusable without embedded side-effects.
-- **Instant UI Testing:** Dumb presentational views can be unit-tested or iterated on in Storybook with plain props without mocking complex backend APIs.
-- **Platform-Agnostic Headless Logic:** Headless state hooks can be shared directly across React Web and React Native.
+- **Shared Domain Core (`packages/cart`):** Pure, hardware-free business rules and use cases shared 100% across Web, Mobile, and Backend with zero UI or database framework dependencies.
+- **Pluggable Infrastructure (`apps/*/src/adapters`):** Interchangeable storage and notification adapters (LocalStorage, AsyncStorage, Web Toasts, Native Alerts) implementing Domain Port interfaces.
+- **1-to-1 Web & Mobile Symmetry:** Identical UI Container / Presentational patterns and Zustand stores (`useCartStore` with `useShallow`) across React Web and React Native.
+- **Dependency Injection (`di-container.ts`):** Central composition root in each app instantiating adapters and injecting them into Use Cases.
+- **Compile-Time Resilience (`Result<T, E>`):** Explicit discriminated unions replacing unhandled exception throwing across all use cases.
 
 ---
 
-### 2. Hexagonal Architecture (Ports & Adapters)
-
-- **Domain Center:** Pure business entities (`BudgetCart`) and Use Cases (`AddItemUseCase`) have **zero dependencies** on React, DOM APIs (`window`, `localStorage`), or backend databases.
-- **Inbound Ports (Primary):** Use Case interfaces (`CartUseCase`, `AddItemUseCase`) invoked by Presentation Container components and Zustand stores.
-- **Outbound Ports (Secondary):** Infrastructure interfaces (`CartRepositoryPort`, `NotificationPort`, `LoggerPort`) implemented by concrete platform infrastructure adapters (`LocalStorageCartRepository`, `ToastNotificationAdapter`, `ConsoleLoggerAdapter`).
-
-#### ✅ Pros & Architectural Advantages:
-
-- **100% Framework Independence:** Core business rules are insulated from UI or database framework replacements.
-- **Pluggable Infrastructure:** Easily swap LocalStorage for HTTP REST APIs, or swap Web Toast notifications for Native Alerts without changing business code.
-- **Fast In-Memory Unit Testing:** Business logic tests execute in pure Node.js in milliseconds without needing a browser or database.
-
----
-
-### 3. Domain-Driven Design (DDD Bounded Contexts)
-
-- **Strategic Slicing:** Code is partitioned vertically into independent Bounded Context feature packages (`@clean/cart`, `@clean/auth`).
-- **Ubiquitous Language:** Domain entity names and use case operations (`BudgetCart.addItem()`, `AddItemUseCase`) match real-world business domain concepts directly.
-- **Typed Domain Errors:** Custom error classes (`BudgetExceededError`, `InvalidBudgetLimitError`) encapsulate domain validation failure rules cleanly.
-
-#### ✅ Pros & Architectural Advantages:
-
-- **Micro-Frontend & Microservice Ready:** Independent package boundaries simplify splitting monorepos into separate micro-frontends or microservices later.
-- **Clear Team Ownership:** Autonomous teams can work on different bounded context packages (`packages/cart`, `packages/auth`) with zero code collision.
-- **Explicit Error Boundaries:** Domain rules fail with explicit, typed error objects rather than cryptic generic strings.
-
----
-
-### 4. Result / Either Functional Pattern
-
-- Replaces unhandled try/catch exception throwing with a type-safe `Result<T, E>` discriminated union (`ok()` and `fail()`).
-- Forces use case callers (UI containers and Zustand stores) to explicitly handle success and failure paths at compile time.
-
-#### ✅ Pros & Architectural Advantages:
-
-- **Zero Uncaught Exceptions:** Eliminates unexpected runtime crashes caused by unhandled thrown errors.
-- **Compile-Time Safety:** TypeScript forces callers to check `if (result.ok)` before accessing return values.
-- **Predictable Error Propagation:** Errors flow predictably through the pipeline without polluting global error boundaries.
-
----
-
-### 5. Dependency Injection Container (`di-container.ts`)
-
-- `di-container.ts` in each application acts as the central Dependency Injection (DI) Container.
-- Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`dependency-context.tsx`) or Zustand store (`use-cart-store.ts`), preserving strict architectural boundaries.
-
-#### ✅ Pros & Architectural Advantages:
-
-- **Zero Component Coupling:** Components and stores never import concrete adapters directly.
-- **Single Configuration Point:** Changing an infrastructure implementation (e.g. enabling a NestJS Mock API) happens in one central file.
-
----
-
-## 🏗️ Workspace Package Overview
+## 🏗️ Workspace Structure
 
 ```
 packages/
-  ├── cart/        --> @clean/cart (budget-cart.ts, add-item-use-case.ts)
-  ├── auth/        --> @clean/auth (user-entity.ts, login-use-case.ts)
-  ├── logger/      --> @clean/logger (logger-port.ts, console-logger-adapter.ts)
-  ├── telemetry/   --> @clean/telemetry (telemetry-port.ts, console-telemetry-adapter.ts)
-  └── ui-logic/    --> @clean/ui-logic (use-headless-select.ts)
+  ├── cart/        --> @clean/cart (Domain Entities, Use Cases & Port Interfaces)
+  ├── auth/        --> @clean/auth (User Domain Entities & Use Cases)
+  ├── logger/      --> @clean/logger (Logger Port & Console Adapter)
+  ├── telemetry/   --> @clean/telemetry (Telemetry Port & Console Adapter)
+  └── ui-logic/    --> @clean/ui-logic (Headless UI Hooks)
 
 apps/
-  ├── web/         --> React 18 Web App (Presentation Layer, Zustand Store, di-container.ts)
-  ├── mobile/      --> React Native Mobile App (AsyncStorage Adapter, di-container.ts)
-  └── mock-api/    --> Standalone NestJS Mock REST Server (Port 4000)
+  ├── web/         --> React 18 Web App (Vite, LocalStorage Adapter, Port 5173)
+  ├── mobile/      --> React Native App (Expo, AsyncStorage Adapter)
+  └── mock-api/    --> Standalone NestJS REST API Server (Port 4000)
 ```
 
 ---
@@ -121,7 +51,7 @@ apps/
 npm install
 ```
 
-### 2. Run Test Suite Across All 7 Workspace Projects (Nx Caching Enabled)
+### 2. Run Workspace Test Suite
 
 ```bash
 npm test
@@ -129,42 +59,28 @@ npm test
 npx nx run-many -t test
 ```
 
-### 3. Run ESLint & Prettier
+### 3. Run Typecheck, Linter & Formatter
 
 ```bash
+npx tsc --noEmit
 npm run lint
 npm run format
 ```
 
-### 4. Run Web App Dev Server
+### 4. Run Application Dev Servers
 
 ```bash
+# Start Web App (Port 5173)
 npm start
-# or
-npm run dev -w web
-```
 
-### 5. Run NestJS Mock API Server
-
-```bash
+# Start NestJS Mock API (Port 4000)
 npm run dev:mock-api
-```
 
-### 6. Run Mobile App with Expo
-
-Install Expo Go on a phone, then run:
-
-```bash
+# Start Expo Mobile App
 npm run dev:mobile
 ```
 
-Scan the QR code from Expo Go. Phone and development machine should be on the same
-network. For local simulators, use `npm run ios` or `npm run android`.
-
-Mobile data is persisted with AsyncStorage and uses the same `@clean/cart` entities
-and use cases as the web app.
-
-### 7. Visualize Nx Workspace Graph
+### 5. Visualize Nx Graph
 
 ```bash
 npx nx graph
