@@ -1,3 +1,3 @@
-export interface ClockPort {
+export type ClockPort = {
   now(): number;
-}
+};

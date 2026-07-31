@@ -7,37 +7,38 @@ This document details the software architecture, design patterns, bounded contex
 ## 🔗 Documentation Links
 
 - 🏠 **[Project Readme](../README.md)** — Quickstart guide, test commands, and overview.
-- 🛠️ **[Technology Stack Reference](tech-stack.md)** — Specifications for TypeScript, React, Expo, NestJS, Vite, Nx, and Vitest.
+- 🛠️ **[Technology Stack Reference](tech-stack.md)** — Specifications for TypeScript, React, Next.js, Expo, NestJS, Vite, Nx, and Vitest.
 
 ---
 
-## 🏛️ Hexagonal Architecture Diagrams
+## 🌟 Why Combined Hexagonal & DDD Architecture is the Enterprise Standard
 
-### 1. The Hexagon (Inbound vs Outbound Ports)
+Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Adapters)**, and **Domain-Driven Design (DDD)** represents the industry gold standard for modern multi-platform software development.
 
-In Hexagonal Architecture, the **Dependency Inversion Principle (DIP)** guarantees that all dependencies point **inward toward the Domain Core**:
+### 🔑 Key Industry Advantages:
 
-```
-                     HEXAGONAL ARCHITECTURE (PORTS & ADAPTERS)
+1. 📱 **Multi-Platform Delivery (Vite, Next.js & React Native Share 100% Business Logic):**
+   Core business entities (`budget-cart.ts`) and use cases (`add-item-use-case.ts`) live in pure hardware-free packages (`@clean/cart`) with **zero dependencies on React, Web DOM (`window`), or React Native**.
+   - `apps/web` (Vite SPA) consumes `@clean/cart` domain + `@clean/web-ui-components`.
+   - `apps/web-next` (Next.js 15 App Router) consumes `@clean/cart` domain + `@clean/web-ui-components`.
+   - `apps/mobile` (Expo React Native) consumes `@clean/cart` domain + native adapters.
+   - All three platforms consume **100% identical domain logic and use cases**.
 
-      OUTSIDE THE HEXAGON                  INSIDE THE HEXAGON
- ┌──────────────────────────┐        ┌────────────────────────────┐
- │  3. PRESENTATION LAYER   │        │                            │
- │     (UI, React, Native)  │──────┐ │  2. APPLICATION LAYER      │
- └──────────────────────────┘      │ │     (Use Cases & Ports)    │
-                                   ├──►                           │
- ┌──────────────────────────┐      │ │  1. DOMAIN LAYER           │
- │  3. INFRASTRUCTURE LAYER │──────┘ │     (Entities & Rules)     │
- │     (Adapters, DB, HTTP) │        │                            │
- └──────────────────────────┘        └────────────────────────────┘
-```
+2. 🛡️ **Total Decoupling from Framework Volatility:**
+   Hexagonal Architecture places frameworks on the _outside_ as interchangeable **Infrastructure Adapters**. Replacing React with Vue, or LocalStorage with a NestJS backend, requires **zero changes** to your core domain business rules.
 
-- **Inbound Ports (Primary):** Use Case interfaces (`AddItemUseCase`, `CartUseCase`) called by UI Presentation Containers or Zustand Stores to trigger business actions.
-- **Outbound Ports (Secondary):** Infrastructure contracts (`CartRepositoryPort`, `NotificationPort`) defined _inside_ the Core and implemented _outside_ by concrete adapters (`LocalStorageCartRepository`, `AsyncStorageCartRepository`).
+3. 🎨 **Shared Web Design System (`@clean/web-ui-components`):**
+   Reusable, styled React web UI components (`SharedButton`, `SharedCard`, `SharedBadge`) live in `packages/web-ui-components` and are imported by both `apps/web` (Vite) and `apps/web-next` (Next.js).
+
+4. 🧱 **Micro-Frontend (MFE) Readiness:**
+   Vertical package slicing by DDD Bounded Contexts (`@clean/cart`, `@clean/auth`) establishes strict encapsulation boundaries, making it effortless to extract packages into independent micro-frontends or microservices.
+
+5. 🔒 **Type-Safe Operational Resilience (Result Pattern):**
+   Domain operations return explicit `Result<T, E>` discriminated unions (`ok()` and `fail()`) instead of throwing uncaught exceptions.
 
 ---
 
-### 2. Monorepo Architectural Layer Map
+## 🏛️ Monorepo Architectural Layer Map
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────┐
@@ -47,45 +48,19 @@ In Hexagonal Architecture, the **Dependency Inversion Principle (DIP)** guarante
 │    • Port Interfaces (Outbound Ports): CartRepositoryPort, NotificationPort │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 2. INFRASTRUCTURE LAYER (Outside the Hexagon · Platform Adapters)           │
-│    • Web Storage: LocalStorageCartRepository (apps/web/src/adapters)        │
+│    • Web Storage: LocalStorageCartRepository (apps/web & apps/web-next)     │
 │    • Mobile Storage: AsyncStorageCartRepository (apps/mobile/src/adapters)  │
 │    • HTTP Client: CachedHttpCartRepository                                  │
-│    • Composition Root / DI: di-container.ts                                 │
+│    • Composition Root / DI: di-container.ts in each app                     │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 3. PRESENTATION LAYER (Outside the Hexagon · UI Patterns)                   │
-│    • UI State Store: useCartStore (Zustand with useShallow)                 │
-│    • Container / Presenter: BudgetTrackerContainer (State & logic)          │
-│    • Presentational View: BudgetTrackerView (Pure rendering layout)         │
-│    • Headless UI Hooks: useHeadlessSelect (packages/ui-logic)               │
+│    • Shared Web UI Components: SharedButton, SharedCard (@clean/web-ui-comp)│
+│    • Headless UI Hooks: useHeadlessSelect (@clean/ui-logic)                 │
+│    • Vite SPA App: apps/web (React 18 + Web Component export)               │
+│    • Next.js App: apps/web-next (Next.js 15 App Router)                      │
+│    • Mobile App: apps/mobile (Expo React Native)                            │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
-
----
-
-## 🏛️ Architectural Patterns & Design Principles
-
-### 1. Presentation Layer Pattern (Container / Presenter, Headless UI, & Stores)
-
-- **Smart Container (`BudgetTrackerContainer`):** Handles presentation side-effects, subscribes to notification adapters, and orchestrates UI state via `useCartStore` with `useShallow` destructuring.
-- **Dumb Presentational View (`BudgetTrackerView`):** Purely decorative component receiving props (`cart`, `loading`, `errorMessage`, event handlers) with zero business logic.
-- **Headless UI State Hooks (`useHeadlessSelect` in `@clean/ui-logic`):** Manages keyboard navigation (`ArrowUp`/`ArrowDown`/`Escape`), ARIA attributes, and state machine transitions with **zero DOM rendering logic**.
-- **Presentation State Store (`useCartStore`):** Lightweight Zustand store in `apps/web/src/ui/store/` and `apps/mobile/src/ui/store/`. Delegates all business operations to `@clean/cart` Use Cases.
-
-### 2. Domain-Driven Design (DDD Bounded Contexts)
-
-- **Strategic Package Slicing:** Code is partitioned vertically into independent Bounded Context feature packages (`@clean/cart`, `@clean/auth`).
-- **Ubiquitous Language:** Domain entity names and use case operations (`BudgetCart.addItem()`, `AddItemUseCase`) match real-world business domain concepts directly.
-- **Typed Domain Errors:** Custom error classes (`BudgetExceededError`, `InvalidBudgetLimitError`) encapsulate domain validation failure rules cleanly.
-
-### 3. Result / Either Functional Pattern
-
-- Replaces unhandled try/catch exception throwing with a type-safe `Result<T, E>` discriminated union (`ok()` and `fail()`).
-- Forces callers (UI containers and Zustand stores) to explicitly handle success and failure paths at compile time.
-
-### 4. Dependency Injection Container (`di-container.ts`)
-
-- `di-container.ts` in each application acts as the central Dependency Injection (DI) Container.
-- Instantiates concrete platform adapters privately and exports _only_ Use Cases to the UI context provider (`dependency-context.tsx`) or Zustand store (`use-cart-store.ts`), preserving strict architectural boundaries.
 
 ---
 
@@ -93,50 +68,26 @@ In Hexagonal Architecture, the **Dependency Inversion Principle (DIP)** guarante
 
 ```
 clean-architecture-monorepo/
-├── package.json                            <-- Root workspace configuration
-├── nx.json                                 <-- Nx build pipeline & computation cache engine
+├── pnpm-workspace.yaml                     <-- Monorepo workspace configuration
+├── package.json                            <-- Root scripts (pnpm start, pnpm dev:next, etc.)
+├── nx.json                                 <-- Nx build & test pipeline engine
 ├── tsconfig.json                           <-- Workspace TypeScript configuration
 │
 ├── docs/                                   <-- Architecture & Tech Stack documentation
 │   ├── architecture.md
 │   └── tech-stack.md
 │
-├── packages/                               <-- SHARED DOMAIN & UTILITY PACKAGES
+├── packages/                               <-- SHARED DOMAIN & UI PACKAGES
 │   ├── cart/                               <-- @clean/cart (Cart Bounded Context Package)
-│   │   ├── package.json
-│   │   └── src/
-│   │       ├── domain/
-│   │       │   ├── entities/ (budget-cart.ts)
-│   │       │   ├── errors/ (budget-exceeded-error.ts, domain-error.ts)
-│   │       │   ├── result/ (result.ts)
-│   │       │   └── use-cases/ (add-item-use-case.ts, cart-use-case.ts, etc.)
-│   │       └── ports/ (cart-repository-port.ts, notification-port.ts, etc.)
-│   │
 │   ├── auth/                               <-- @clean/auth (Auth Bounded Context Package)
-│   │   └── src/ (user-entity.ts, login-use-case.ts, auth-repository-port.ts)
 │   ├── logger/                             <-- @clean/logger (logger-port.ts, console-logger-adapter.ts)
 │   ├── telemetry/                          <-- @clean/telemetry (telemetry-port.ts, console-telemetry-adapter.ts)
-│   └── ui-logic/                           <-- @clean/ui-logic (use-headless-select.ts)
+│   ├── ui-logic/                           <-- @clean/ui-logic (use-headless-select.ts)
+│   └── web-ui-components/                  <-- [RENAMED] @clean/web-ui-components (Shared Web Design System)
 │
 └── apps/                                   <-- PLATFORM CONSUMPTION APPS
-    ├── web/                                <-- REACT WEB APPLICATION (Port 5173)
-    │   └── src/
-    │       ├── adapters/ (local-storage-cart-repository.ts, cached-http-cart-repository.ts)
-    │       └── ui/
-    │           ├── store/ (use-cart-store.ts - Zustand Store with useShallow)
-    │           ├── di-container.ts (Dependency Injection Container)
-    │           ├── budget-tracker-container.tsx (Smart Container Component)
-    │           └── budget-tracker-view.tsx (Dumb Presentational View Component)
-    │
-    ├── mobile/                             <-- REACT NATIVE MOBILE APPLICATION (Expo)
-    │   └── src/
-    │       ├── adapters/ (async-storage-cart-repository.ts, native-alert-notification-adapter.ts)
-    │       └── ui/
-    │           ├── store/ (use-cart-store.ts - Mobile Zustand Store)
-    │           ├── di-container.ts (Mobile DI Container)
-    │           ├── budget-tracker-container.tsx (Smart Container Component)
-    │           └── budget-tracker-view.tsx (Native Presentational View Component)
-    │
+    ├── web/                                <-- REACT VITE SPA (Port 5173)
+    ├── web-next/                           <-- NEXT.JS 15 APP ROUTER APP (Port 3000)
+    ├── mobile/                             <-- REACT NATIVE MOBILE APP (Expo)
     └── mock-api/                           <-- NESTJS STANDALONE MOCK REST SERVER (Port 4000)
-        └── src/ (app.module.ts, main.ts, cart/cart.controller.ts, cart/cart.service.ts)
 ```

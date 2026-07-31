@@ -5,10 +5,10 @@ import { dependencies, type Dependencies } from '../di-container';
 export type CartStoreState = {
   cart: BudgetCart | null;
   loading: boolean;
-  error: string | null;
+  errorMessage: string | null;
   fetchCart: (cartId: string) => Promise<void>;
-  addItem: (cartId: string, name: string, price: number, category: string) => Promise<void>;
-  updateLimit: (cartId: string, newLimit: number) => Promise<void>;
+  addItem: (cartId: string, name: string, price: number, category: string) => Promise<boolean>;
+  updateLimit: (cartId: string, newLimit: number) => Promise<boolean>;
   removeItem: (cartId: string, itemId: string) => Promise<void>;
 };
 
@@ -16,45 +16,49 @@ export const createCartStore = (deps: Dependencies = dependencies) =>
   create<CartStoreState>((set) => ({
     cart: null,
     loading: false,
-    error: null,
+    errorMessage: null,
 
     fetchCart: async (cartId: string) => {
-      set({ loading: true, error: null });
+      set({ loading: true, errorMessage: null });
       const result = await deps.cartUseCase.execute(cartId);
       if (result.ok) {
         set({ cart: result.value, loading: false });
       } else {
-        set({ error: result.error.message, loading: false });
+        set({ errorMessage: result.error.message, loading: false });
       }
     },
 
     addItem: async (cartId: string, name: string, price: number, category: string) => {
-      set({ loading: true, error: null });
+      set({ loading: true, errorMessage: null });
       const result = await deps.addItemUseCase.execute(cartId, name, price, category);
       if (result.ok) {
         set({ cart: result.value, loading: false });
+        return true;
       } else {
-        set({ error: result.error.message, loading: false });
+        set({ errorMessage: result.error.message, loading: false });
+        return false;
       }
     },
 
     updateLimit: async (cartId: string, newLimit: number) => {
-      set({ loading: true, error: null });
+      set({ loading: true, errorMessage: null });
       const result = await deps.updateLimitUseCase.execute(cartId, newLimit);
       if (result.ok) {
         set({ cart: result.value, loading: false });
+        return true;
       } else {
-        set({ error: result.error.message, loading: false });
+        set({ errorMessage: result.error.message, loading: false });
+        return false;
       }
     },
 
     removeItem: async (cartId: string, itemId: string) => {
-      set({ loading: true, error: null });
+      set({ loading: true, errorMessage: null });
       const result = await deps.removeItemUseCase.execute(cartId, itemId);
       if (result.ok) {
         set({ cart: result.value, loading: false });
       } else {
-        set({ error: result.error.message, loading: false });
+        set({ errorMessage: result.error.message, loading: false });
       }
     },
   }));

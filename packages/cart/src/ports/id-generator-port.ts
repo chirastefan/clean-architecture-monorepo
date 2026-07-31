@@ -1,3 +1,3 @@
-export interface IdGeneratorPort {
+export type IdGeneratorPort = {
   generateId(): string;
-}
+};

@@ -1,13 +1,12 @@
 {
-  "name": "web",
+  "name": "web-next",
   "private": true,
   "version": "1.0.0",
-  "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "build:wc": "vite build -c vite.wc.config.ts",
-    "test": "vitest run"
+    "dev": "next dev -p 3000",
+    "build": "next build",
+    "start": "next start",
+    "test": "vitest run src/"
   },
   "dependencies": {
     "@clean/auth": "workspace:*",
@@ -16,17 +15,16 @@
     "@clean/telemetry": "workspace:*",
     "@clean/ui-logic": "workspace:*",
     "@clean/web-ui-components": "workspace:*",
-    "@r2wc/react-to-web-component": "^2.1.1",
+    "next": "^15.1.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "zustand": "^5.0.3"
   },
   "devDependencies": {
-    "@testing-library/react": "^16.3.2",
-    "@vitejs/plugin-react": "^4.3.4",
-    "jsdom": "^29.1.1",
+    "@types/node": "^26.1.2",
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.5",
     "typescript": "~5.6.2",
-    "vite": "^6.0.1",
     "vitest": "^4.1.10"
   }
 }

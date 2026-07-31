@@ -1,3 +1,3 @@
-export interface NotificationPort {
+export type NotificationPort = {
   notify(message: string, type: 'success' | 'error' | 'info'): void;
-}
+};

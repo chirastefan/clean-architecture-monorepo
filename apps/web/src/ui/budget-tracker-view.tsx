@@ -3,20 +3,20 @@ import { type BudgetCart } from '@clean/cart';
 import { Select } from './components/select/select';
 import './styles/dashboard.css';
 
-export interface ToastMessage {
+export type ToastMessage = {
   id: string;
   message: string;
   type: string;
-}
+};
 
-export interface BudgetTrackerViewProps {
+export type BudgetTrackerViewProps = {
   cart: BudgetCart | null;
   loading: boolean;
   toasts: ToastMessage[];
   onAddItem: (name: string, price: number, category: string) => void;
   onUpdateLimit: (newLimit: number) => void;
   onRemoveItem: (itemId: string) => void;
-}
+};
 
 const CATEGORY_OPTIONS = [
   { value: 'utilities', label: '⚡ Utilities' },

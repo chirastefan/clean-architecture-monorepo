@@ -14,7 +14,7 @@ import {
   View,
 } from 'react-native';
 
-interface Category {
+type Category = {
   value: string;
   label: string;
   accent: string;
@@ -28,7 +28,7 @@ const CATEGORIES: Category[] = [
   { value: 'other', label: 'Other', accent: '#64748b' },
 ];
 
-interface BudgetTrackerViewProps {
+type BudgetTrackerViewProps = {
   cart: BudgetCart | null;
   loading: boolean;
   errorMessage: string | null;

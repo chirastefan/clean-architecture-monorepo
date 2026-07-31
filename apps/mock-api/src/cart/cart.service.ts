@@ -1,18 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-export interface CartItem {
+export type CartItem = {
   id: string;
   name: string;
   price: number;
   category: string;
   timestamp: number;
-}
+};
 
-export interface CartData {
+export type CartData = {
   id: string;
   limit: number;
   items: CartItem[];
-}
+};
 
 @Injectable()
 export class CartService {

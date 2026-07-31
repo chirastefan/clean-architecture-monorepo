@@ -2,7 +2,7 @@ import { type CartRepositoryPort, BudgetCart } from '@clean/cart';
 
 const ASYNC_STORAGE_PREFIX = '@mobile_cart_';
 
-export interface AsyncStorageLike {
+export type AsyncStorageLike = {
   getItem(key: string): Promise<string | null>;
   setItem(key: string, value: string): Promise<void>;
 }

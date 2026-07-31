@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { type BudgetCart } from '@clean/cart';
 import { createMobileDependencies, type MobileDependencies } from '../di-container';
 
-export interface CartStoreState {
+export type CartStoreState = {
   cart: BudgetCart | null;
   loading: boolean;
   errorMessage: string | null;

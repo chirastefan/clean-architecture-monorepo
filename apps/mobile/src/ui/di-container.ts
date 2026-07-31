@@ -10,7 +10,7 @@ import {
   NativeAlertNotificationAdapter,
 } from '../adapters/native-alert-notification-adapter';
 
-export interface MobileDependencyOptions {
+export type MobileDependencyOptions = {
   storage?: AsyncStorageLike;
   alertHandler?: NativeAlertHandler;
   generateId?: () => string;
