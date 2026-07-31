@@ -24,10 +24,10 @@ function useSelectContext() {
   return context;
 }
 
-export interface SelectProps extends UseHeadlessSelectOptions {
+export type SelectProps = UseHeadlessSelectOptions & {
   children: ReactNode;
   className?: string;
-}
+};
 
 export function Select({ options, selectedValue, onChange, children, className }: SelectProps) {
   const headless = useHeadlessSelect({ options, selectedValue, onChange });
