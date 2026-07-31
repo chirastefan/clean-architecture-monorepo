@@ -13,13 +13,13 @@ This document outlines the core technology stack, tools, and execution environme
 
 ## 1. Core Stack & Frameworks
 
+- **Package Manager:** pnpm 10+ (`pnpm-workspace.yaml`)
 - **Language:** TypeScript 5.6+ (Strict mode, ES2022 target, Bundler module resolution)
 - **Web App:** React 18.3+ (Vite 6, JSX transform `"jsx": "react-jsx"`, React Hooks)
 - **Mobile App:** React Native 0.76+ & Expo 52+ (Native components, AsyncStorage)
 - **Mock Backend:** NestJS 10+ (`@nestjs/core`, `@nestjs/common`, Port 4000)
 - **Bundler & Dev Server:** Vite 6.0+ (Web HMR and Web Component bundling with `@r2wc/react-to-web-component`)
 - **Monorepo & Build Pipeline:** Nx 20.8+ (Computation caching, task pipeline graph, `nx run-many`)
-- **Workspace Engine:** npm Workspaces (`workspaces: ["packages/*", "apps/*"]`)
 
 ---
 

@@ -10,11 +10,11 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@clean/auth": "*",
-    "@clean/cart": "*",
-    "@clean/logger": "*",
-    "@clean/telemetry": "*",
-    "@clean/ui-logic": "*",
+    "@clean/auth": "workspace:*",
+    "@clean/cart": "workspace:*",
+    "@clean/logger": "workspace:*",
+    "@clean/telemetry": "workspace:*",
+    "@clean/ui-logic": "workspace:*",
     "@r2wc/react-to-web-component": "^2.1.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

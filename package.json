@@ -3,17 +3,13 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "workspaces": [
-    "packages/*",
-    "apps/*"
-  ],
   "scripts": {
-    "start": "npm run dev -w web",
-    "dev": "npm run dev -w web",
-    "dev:mobile": "npm run start -w mobile",
-    "android": "npm run android -w mobile",
-    "ios": "npm run ios -w mobile",
-    "dev:mock-api": "npm run dev -w mock-api",
+    "start": "pnpm --filter web dev",
+    "dev": "pnpm --filter web dev",
+    "dev:mobile": "pnpm --filter mobile start",
+    "android": "pnpm --filter mobile android",
+    "ios": "pnpm --filter mobile ios",
+    "dev:mock-api": "pnpm --filter mock-api dev",
     "test": "nx run-many -t test",
     "build": "nx run-many -t build",
     "lint": "eslint .",

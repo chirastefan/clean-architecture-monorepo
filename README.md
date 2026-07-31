@@ -1,6 +1,6 @@
 # Clean Architecture Monorepo (`clean-architecture-monorepo`)
 
-A production-grade, multi-platform TypeScript monorepo demonstrating **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD)**, **Presentation Layer Patterns**, and **Multi-Platform Delivery (Web, Mobile & Backend)**.
+A production-grade, multi-platform TypeScript monorepo powered by **pnpm 10+ workspaces**, demonstrating **Hexagonal Architecture (Ports & Adapters)**, **Domain-Driven Design (DDD)**, **Presentation Layer Patterns**, and **Multi-Platform Delivery (Web, Mobile & Backend)**.
 
 > 💡 **Strict File Naming Convention:** 100% of workspace files and directories follow **kebab-case** (`di-container.ts`, `add-item-use-case.ts`, `budget-tracker-container.tsx`), eliminating cross-platform filesystem casing bugs on macOS, Linux CI/CD, and Windows.
 
@@ -11,7 +11,7 @@ A production-grade, multi-platform TypeScript monorepo demonstrating **Hexagonal
 All deep-dive system architecture, layer diagrams, and technical references are maintained in the `docs/` directory:
 
 - 📐 **[System Architecture Guide](docs/architecture.md)** — Comprehensive reference on Hexagonal Architecture (Inbound/Outbound Ports), Domain-Driven Design, UI Presentation Patterns, Layer Maps, and Directory Structure.
-- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Core stack specifications for TypeScript 5.6, React 18, Expo 52, NestJS 10, Vite 6, Nx 20, Vitest 4, and Zustand.
+- 🛠️ **[Technology Stack & Tooling Reference](docs/tech-stack.md)** — Core stack specifications for pnpm 10, TypeScript 5.6, React 18, Expo 52, NestJS 10, Vite 6, Nx 20, Vitest 4, and Zustand.
 
 ---
 
@@ -25,7 +25,7 @@ All deep-dive system architecture, layer diagrams, and technical references are 
 
 ---
 
-## 🏗️ Workspace Structure
+## 🏗️ Workspace Structure (`pnpm-workspace.yaml`)
 
 ```
 packages/
@@ -43,18 +43,18 @@ apps/
 
 ---
 
-## ⚡ Quick Start Commands
+## ⚡ Quick Start Commands (pnpm)
 
 ### 1. Install Dependencies
 
 ```bash
-npm install
+pnpm install
 ```
 
 ### 2. Run Workspace Test Suite
 
 ```bash
-npm test
+pnpm test
 # or
 npx nx run-many -t test
 ```
@@ -63,21 +63,21 @@ npx nx run-many -t test
 
 ```bash
 npx tsc --noEmit
-npm run lint
-npm run format
+pnpm run lint
+pnpm run format
 ```
 
 ### 4. Run Application Dev Servers
 
 ```bash
 # Start Web App (Port 5173)
-npm start
+pnpm start
 
 # Start NestJS Mock API (Port 4000)
-npm run dev:mock-api
+pnpm dev:mock-api
 
 # Start Expo Mobile App
-npm run dev:mobile
+pnpm dev:mobile
 ```
 
 ### 5. Visualize Nx Graph
