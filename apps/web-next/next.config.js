@@ -3,6 +3,7 @@ const nextConfig = {
   reactStrictMode: true,
   transpilePackages: [
     '@clean/cart',
+    '@clean/cart-store',
     '@clean/auth',
     '@clean/logger',
     '@clean/telemetry',

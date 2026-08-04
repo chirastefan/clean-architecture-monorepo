@@ -1,28 +1,27 @@
 import { useEffect, useState } from 'react';
-import { useShallow } from 'zustand/react/shallow';
+import {
+  addItemThunk,
+  fetchCartThunk,
+  removeItemThunk,
+  updateLimitThunk,
+  useCartDispatch,
+  useCartSelector,
+} from '@clean/cart-store';
 
 import { useDependencies } from './dependency-context';
 import { BudgetTrackerView } from './budget-tracker-view';
-import { useCartStore } from './store/use-cart-store';
 
 export function BudgetTrackerContainer() {
   const { notificationAdapter } = useDependencies();
-  const { cart, loading, fetchCart, addItem, updateLimit, removeItem } = useCartStore(
-    useShallow((state) => ({
-      cart: state.cart,
-      loading: state.loading,
-      fetchCart: state.fetchCart,
-      addItem: state.addItem,
-      updateLimit: state.updateLimit,
-      removeItem: state.removeItem,
-    }))
-  );
+  const dispatch = useCartDispatch();
+  const cart = useCartSelector((state) => state.cart.cart);
+  const loading = useCartSelector((state) => state.cart.loading);
 
   const [toasts, setToasts] = useState<Array<{ id: string; message: string; type: string }>>([]);
 
   useEffect(() => {
-    fetchCart('default-planner');
-  }, [fetchCart]);
+    dispatch(fetchCartThunk('default-planner'));
+  }, [dispatch]);
 
   useEffect(() => {
     const unsubscribe = (notificationAdapter as any).subscribe((message: string, type: string) => {
@@ -36,15 +35,15 @@ export function BudgetTrackerContainer() {
   }, [notificationAdapter]);
 
   const handleAddItem = (name: string, price: number, category: string) => {
-    addItem('default-planner', name, price, category);
+    dispatch(addItemThunk({ cartId: 'default-planner', name, price, category }));
   };
 
   const handleUpdateLimit = (newLimit: number) => {
-    updateLimit('default-planner', newLimit);
+    dispatch(updateLimitThunk({ cartId: 'default-planner', newLimit }));
   };
 
   const handleRemoveItem = (itemId: string) => {
-    removeItem('default-planner', itemId);
+    dispatch(removeItemThunk({ cartId: 'default-planner', itemId }));
   };
 
   return (

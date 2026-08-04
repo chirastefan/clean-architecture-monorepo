@@ -10,7 +10,7 @@ export type CartStoreState = {
   addItem: (cartId: string, name: string, price: number, category: string) => Promise<boolean>;
   updateLimit: (cartId: string, newLimit: number) => Promise<boolean>;
   removeItem: (cartId: string, itemId: string) => Promise<void>;
-}
+};
 
 export const createCartStore = (deps: MobileDependencies = createMobileDependencies()) =>
   create<CartStoreState>((set) => ({

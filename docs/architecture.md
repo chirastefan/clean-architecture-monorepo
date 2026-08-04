@@ -18,14 +18,14 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 ### 🔑 Key Industry Advantages:
 
 1. 📱 **Multi-Platform Delivery (Vite, Next.js & React Native Share 100% Business Logic):**
-   Core business entities (`budget-cart.ts`) and use cases (`add-item-use-case.ts`) live in pure hardware-free packages (`@clean/cart`) with **zero dependencies on React, Web DOM (`window`), or React Native**.
-   - `apps/web` (Vite SPA) consumes `@clean/cart` domain + `@clean/web-ui-components`.
-   - `apps/web-next` (Next.js 15 App Router) consumes `@clean/cart` domain + `@clean/web-ui-components`.
-   - `apps/mobile` (Expo React Native) consumes `@clean/cart` domain + native adapters.
+   Core business entities (`budget-cart.ts`) and use cases (`add-item-use-case.ts`) live in pure hardware-free packages (`@clean/cart`) with **zero dependencies on React, Redux, Web DOM (`window`), or React Native**.
+   - `apps/web` (Vite SPA) consumes `@clean/cart` domain via Redux Toolkit (`addItemThunk`).
+   - `apps/web-next` (Next.js 15 App Router) consumes `@clean/cart` domain via Redux Toolkit (`addItemThunk`).
+   - `apps/mobile` (Expo React Native) consumes `@clean/cart` domain via Zustand.
    - All three platforms consume **100% identical domain logic and use cases**.
 
 2. 🛡️ **Total Decoupling from Framework Volatility:**
-   Hexagonal Architecture places frameworks on the _outside_ as interchangeable **Infrastructure Adapters**. Replacing React with Vue, or LocalStorage with a NestJS backend, requires **zero changes** to your core domain business rules.
+   Hexagonal Architecture places frameworks on the _outside_ as interchangeable **Infrastructure Adapters and Presentation Store Slices**. Replacing Zustand with Redux, or replacing React with Vue, requires **zero changes** to your core domain business rules.
 
 3. 🎨 **Shared Web Design System (`@clean/web-ui-components`):**
    Reusable, styled React web UI components (`SharedButton`, `SharedCard`, `SharedBadge`) live in `packages/web-ui-components` and are imported by both `apps/web` (Vite) and `apps/web-next` (Next.js).
@@ -53,12 +53,13 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 │    • HTTP Client: CachedHttpCartRepository                                  │
 │    • Composition Root / DI: di-container.ts in each app                     │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ 3. PRESENTATION LAYER (Outside the Hexagon · UI Patterns)                   │
+│ 3. PRESENTATION LAYER (Outside the Hexagon · UI & State Patterns)           │
+│    • Redux Toolkit Slices & Thunks: cart-slice.ts, cart-thunks.ts          │
 │    • Shared Web UI Components: SharedButton, SharedCard (@clean/web-ui-comp)│
 │    • Headless UI Hooks: useHeadlessSelect (@clean/ui-logic)                 │
-│    • Vite SPA App: apps/web (React 18 + Web Component export)               │
-│    • Next.js App: apps/web-next (Next.js 15 App Router)                      │
-│    • Mobile App: apps/mobile (Expo React Native)                            │
+│    • Vite SPA App: apps/web (React 18 + Redux Toolkit + Web Component)     │
+│    • Next.js App: apps/web-next (Next.js 15 App Router + Redux Toolkit)     │
+│    • Mobile App: apps/mobile (Expo React Native + Zustand)                  │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
@@ -83,11 +84,22 @@ clean-architecture-monorepo/
 │   ├── logger/                             <-- @clean/logger (logger-port.ts, console-logger-adapter.ts)
 │   ├── telemetry/                          <-- @clean/telemetry (telemetry-port.ts, console-telemetry-adapter.ts)
 │   ├── ui-logic/                           <-- @clean/ui-logic (use-headless-select.ts)
-│   └── web-ui-components/                  <-- [RENAMED] @clean/web-ui-components (Shared Web Design System)
+│   └── web-ui-components/                  <-- @clean/web-ui-components (Shared Web Design System)
 │
 └── apps/                                   <-- PLATFORM CONSUMPTION APPS
-    ├── web/                                <-- REACT VITE SPA (Port 5173)
-    ├── web-next/                           <-- NEXT.JS 15 APP ROUTER APP (Port 3000)
+    ├── web/                                <-- REACT VITE SPA (Port 5173 + Redux Toolkit)
+    │   └── src/
+    │       ├── adapters/ (local-storage-cart-repository.ts)
+    │       └── ui/
+    │           ├── store/ (store.ts, cart-slice.ts, cart-thunks.ts - Redux Toolkit)
+    │           ├── di-container.ts
+    │           └── budget-tracker-container.tsx
+    │
+    ├── web-next/                           <-- NEXT.JS 15 APP ROUTER APP (Port 3000 + Redux Toolkit)
+    │   └── src/
+    │       ├── app/ (layout.tsx, page.tsx)
+    │       └── ui/ (store/store.ts, cart-slice.ts, cart-thunks.ts)
+    │
     ├── mobile/                             <-- REACT NATIVE MOBILE APP (Expo)
     └── mock-api/                           <-- NESTJS STANDALONE MOCK REST SERVER (Port 4000)
 ```

@@ -18,7 +18,7 @@ type Category = {
   value: string;
   label: string;
   accent: string;
-}
+};
 
 const CATEGORIES: Category[] = [
   { value: 'utilities', label: 'Utilities', accent: '#f59e0b' },
@@ -36,7 +36,7 @@ type BudgetTrackerViewProps = {
   onAddItem: (name: string, price: number, category: string) => Promise<boolean>;
   onUpdateLimit: (newLimit: number) => Promise<boolean>;
   onRemoveItem: (itemId: string) => Promise<void>;
-}
+};
 
 export function BudgetTrackerView({
   cart,

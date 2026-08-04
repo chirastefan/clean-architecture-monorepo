@@ -5,7 +5,7 @@ const ASYNC_STORAGE_PREFIX = '@mobile_cart_';
 export type AsyncStorageLike = {
   getItem(key: string): Promise<string | null>;
   setItem(key: string, value: string): Promise<void>;
-}
+};
 
 export class InMemoryAsyncStorage implements AsyncStorageLike {
   private store = new Map<string, string>();

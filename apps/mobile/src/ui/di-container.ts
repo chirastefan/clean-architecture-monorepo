@@ -15,7 +15,7 @@ export type MobileDependencyOptions = {
   alertHandler?: NativeAlertHandler;
   generateId?: () => string;
   now?: () => number;
-}
+};
 
 export function createMobileDependencies(options: MobileDependencyOptions = {}) {
   const storage = options.storage ?? new InMemoryAsyncStorage();

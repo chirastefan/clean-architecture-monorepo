@@ -1,11 +1,7 @@
 export type Role = 'admin' | 'editor' | 'viewer';
 
 export type Permission =
-  | 'cart:read'
-  | 'cart:write'
-  | 'user:manage'
-  | 'profile:read'
-  | 'profile:write';
+  'cart:read' | 'cart:write' | 'user:manage' | 'profile:read' | 'profile:write';
 
 export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
   admin: ['cart:read', 'cart:write', 'user:manage', 'profile:read', 'profile:write'],

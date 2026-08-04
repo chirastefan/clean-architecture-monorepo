@@ -1,5 +1,10 @@
 import { describe, it, expect, vi } from 'vitest';
-import { createCartStore } from './use-cart-store';
+import {
+  addItemThunk,
+  createCartReduxStore,
+  fetchCartThunk,
+  updateLimitThunk,
+} from '@clean/cart-store';
 import {
   CartUseCase,
   AddItemUseCase,
@@ -8,7 +13,7 @@ import {
   BudgetCart,
 } from '@clean/cart';
 
-describe('Zustand CartStore Integration Tests (apps/web)', () => {
+describe('Redux Toolkit CartStore Integration Tests (apps/web)', () => {
   const createMockDeps = () => {
     const mockRepo = {
       getCart: vi.fn().mockResolvedValue(new BudgetCart('store-test-1', 500, [])),
@@ -25,45 +30,53 @@ describe('Zustand CartStore Integration Tests (apps/web)', () => {
       updateLimitUseCase: new UpdateLimitUseCase(mockRepo, mockNotify as any),
       removeItemUseCase: new RemoveItemUseCase(mockRepo, mockNotify as any),
       mockRepo,
+      mockNotify,
     };
   };
 
-  it('should fetch cart and update Zustand store state', async () => {
+  it('should fetch cart and update Redux store state', async () => {
     const deps = createMockDeps();
-    const useStore = createCartStore(deps);
+    const store = createCartReduxStore(deps);
 
-    await useStore.getState().fetchCart('store-test-1');
+    await store.dispatch(fetchCartThunk('store-test-1'));
 
-    const state = useStore.getState();
+    const state = store.getState().cart;
     expect(state.loading).toBe(false);
     expect(state.cart).not.toBeNull();
     expect(state.cart?.id).toBe('store-test-1');
     expect(state.cart?.limit).toBe(500);
   });
 
-  it('should dispatch addItem action and update store state', async () => {
+  it('should dispatch addItem thunk and update Redux store state', async () => {
     const deps = createMockDeps();
-    const useStore = createCartStore(deps);
+    const store = createCartReduxStore(deps);
 
-    await useStore.getState().addItem('store-test-2', 'Zustand Monitor', 150, 'electronics');
+    await store.dispatch(
+      addItemThunk({
+        cartId: 'store-test-2',
+        name: 'Redux Monitor',
+        price: 150,
+        category: 'electronics',
+      })
+    );
 
-    const state = useStore.getState();
+    const state = store.getState().cart;
     expect(state.loading).toBe(false);
     expect(state.cart?.items).toHaveLength(1);
-    expect(state.cart?.items[0].name).toBe('Zustand Monitor');
-    expect(deps.notificationAdapter.notify).toHaveBeenCalledWith(
-      'Added "Zustand Monitor" ($150.00) to planner.',
+    expect(state.cart?.items[0].name).toBe('Redux Monitor');
+    expect(deps.mockNotify.notify).toHaveBeenCalledWith(
+      'Added "Redux Monitor" ($150.00) to planner.',
       'success'
     );
   });
 
-  it('should dispatch updateLimit action and update store state', async () => {
+  it('should dispatch updateLimit thunk and update Redux store state', async () => {
     const deps = createMockDeps();
-    const useStore = createCartStore(deps);
+    const store = createCartReduxStore(deps);
 
-    await useStore.getState().updateLimit('store-test-3', 750);
+    await store.dispatch(updateLimitThunk({ cartId: 'store-test-3', newLimit: 750 }));
 
-    const state = useStore.getState();
+    const state = store.getState().cart;
     expect(state.loading).toBe(false);
     expect(state.cart?.limit).toBe(750);
   });

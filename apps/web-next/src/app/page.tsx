@@ -1,11 +1,21 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useShallow } from 'zustand/react/shallow';
+import { Provider } from 'react-redux';
 import { SharedBadge, SharedButton, SharedCard } from '@clean/web-ui-components';
-import { useCartStore } from '../ui/store/use-cart-store';
+import {
+  addItemThunk,
+  createCartReduxStore,
+  fetchCartThunk,
+  removeItemThunk,
+  updateLimitThunk,
+  useCartDispatch,
+  useCartSelector,
+} from '@clean/cart-store';
+import { dependencies } from '../ui/di-container';
 
 const CART_ID = 'default-planner';
+const store = createCartReduxStore(dependencies);
 
 const CATEGORIES = [
   { value: 'utilities', label: 'Utilities', color: '#f59e0b' },
@@ -15,18 +25,11 @@ const CATEGORIES = [
   { value: 'other', label: 'Other', color: '#64748b' },
 ];
 
-export default function NextBudgetPage() {
-  const { cart, loading, errorMessage, fetchCart, addItem, updateLimit, removeItem } = useCartStore(
-    useShallow((state) => ({
-      cart: state.cart,
-      loading: state.loading,
-      errorMessage: state.errorMessage,
-      fetchCart: state.fetchCart,
-      addItem: state.addItem,
-      updateLimit: state.updateLimit,
-      removeItem: state.removeItem,
-    }))
-  );
+function NextBudgetPageContent() {
+  const dispatch = useCartDispatch();
+  const cart = useCartSelector((state) => state.cart.cart);
+  const loading = useCartSelector((state) => state.cart.loading);
+  const errorMessage = useCartSelector((state) => state.cart.errorMessage);
 
   const [name, setName] = useState('');
   const [amount, setAmount] = useState('');
@@ -34,37 +37,37 @@ export default function NextBudgetPage() {
   const [limit, setLimit] = useState('');
 
   useEffect(() => {
-    void fetchCart(CART_ID);
-  }, [fetchCart]);
+    dispatch(fetchCartThunk(CART_ID));
+  }, [dispatch]);
 
   const totalSpent = cart?.getTotalSpent() ?? 0;
   const budgetLimit = cart?.limit ?? 300;
   const remaining = cart?.getRemainingBudget() ?? budgetLimit;
   const progress = budgetLimit > 0 ? Math.min(totalSpent / budgetLimit, 1) : 0;
 
-  const handleAddExpense = async () => {
+  const handleAddExpense = () => {
     const parsed = Number(amount);
     if (!name.trim() || !Number.isFinite(parsed) || parsed <= 0) return;
-    const ok = await addItem(CART_ID, name.trim(), parsed, category);
-    if (ok) {
-      setName('');
-      setAmount('');
-    }
+    dispatch(addItemThunk({ cartId: CART_ID, name: name.trim(), price: parsed, category }));
+    setName('');
+    setAmount('');
   };
 
-  const handleUpdateLimit = async () => {
+  const handleUpdateLimit = () => {
     const parsed = Number(limit);
     if (!limit.trim() || !Number.isFinite(parsed) || parsed < 0) return;
-    const ok = await updateLimit(CART_ID, parsed);
-    if (ok) {
-      setLimit('');
-    }
+    dispatch(updateLimitThunk({ cartId: CART_ID, newLimit: parsed }));
+    setLimit('');
+  };
+
+  const handleRemoveItem = (itemId: string) => {
+    dispatch(removeItemThunk({ cartId: CART_ID, itemId }));
   };
 
   return (
     <main style={{ maxWidth: '800px', margin: '0 auto', padding: '2rem 1rem' }}>
       <header style={{ marginBottom: '2rem' }}>
-        <SharedBadge color="#3b82f6">NEXT.JS 15 APP ROUTER</SharedBadge>
+        <SharedBadge color="#3b82f6">NEXT.JS 15 APP ROUTER · SHARED REDUX STORE</SharedBadge>
         <h1
           style={{
             fontSize: '2.5rem',
@@ -73,11 +76,10 @@ export default function NextBudgetPage() {
             margin: '0.5rem 0',
           }}
         >
-          Shared Domain, Next.js Delivery.
+          Shared Domain, Shared Redux Store.
         </h1>
         <p style={{ color: '#64748b', fontSize: '1.05rem', margin: 0 }}>
-          Powered by <code>@clean/cart</code> domain use cases and{' '}
-          <code>@clean/web-ui-components</code>.
+          Powered by <code>@clean/cart</code> domain use cases and <code>@clean/cart-store</code>.
         </p>
       </header>
 
@@ -331,7 +333,7 @@ export default function NextBudgetPage() {
                   <span style={{ fontWeight: 700 }}>${item.price.toFixed(2)}</span>
                   <SharedButton
                     variant="danger"
-                    onClick={() => void removeItem(CART_ID, item.id)}
+                    onClick={() => handleRemoveItem(item.id)}
                     style={{ padding: '0.35rem 0.6rem', fontSize: '0.75rem' }}
                   >
                     Delete
@@ -343,5 +345,13 @@ export default function NextBudgetPage() {
         )}
       </SharedCard>
     </main>
+  );
+}
+
+export default function NextBudgetPage() {
+  return (
+    <Provider store={store}>
+      <NextBudgetPageContent />
+    </Provider>
   );
 }

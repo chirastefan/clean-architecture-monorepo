@@ -11,10 +11,7 @@ export class UserProfileController {
   }
 
   @Put(':userId')
-  saveProfile(
-    @Param('userId') userId: string,
-    @Body() payload: UserProfileDto
-  ): UserProfileDto {
+  saveProfile(@Param('userId') userId: string, @Body() payload: UserProfileDto): UserProfileDto {
     return this.profileService.saveProfile(userId, payload);
   }
 }
