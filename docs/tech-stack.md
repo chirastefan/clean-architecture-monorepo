@@ -24,17 +24,18 @@ This document outlines the core technology stack, tools, and execution environme
 
 ---
 
-## 2. State Management & Shared UI
+## 2. State Management & Presentation Packages
 
-- **UI State Management:** Zustand 4.5+ (With `useShallow` for optimized component re-rendering)
+- **Shared Redux Store Package:** `@clean/cart-store` (Redux Toolkit 2.6+, RTK Async Thunks, Slices)
+- **HTTP Fetching Engine:** RTK `fetchBaseQuery` inside `HttpCartRepository` (`apps/web/src/adapters/http-cart-repository.ts`)
+- **Mobile UI State Management:** Zustand 4.5+ (With `useShallow` for optimized component re-rendering)
 - **Shared Web Design System:** `@clean/web-ui-components` (Shared `SharedButton`, `SharedCard`, `SharedBadge`)
 - **Headless UI Pattern:** Custom headless hooks (`useHeadlessSelect` in `@clean/ui-logic`)
-- **Container / Presenter Pattern:** Smart Container components (`BudgetTrackerContainer`) and Dumb Views (`BudgetTrackerView`)
 
 ---
 
 ## 3. Testing & Code Quality
 
-- **Test Runner:** Vitest 4.1+ (Unit & Integration testing across all 9 workspace projects)
+- **Test Runner:** Vitest 4.1+ (Unit & Integration testing across all 10 workspace projects)
 - **Linter & Formatter:** ESLint 9+ (Flat config `eslint.config.js`) & Prettier (Strict 100 print width, 2-space tab width)
 - **Naming Convention:** 100% strict `kebab-case` for all workspace files and directories

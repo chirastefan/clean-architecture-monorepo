@@ -19,21 +19,27 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 
 1. 📱 **Multi-Platform Delivery (Vite, Next.js & React Native Share 100% Business Logic):**
    Core business entities (`budget-cart.ts`) and use cases (`add-item-use-case.ts`) live in pure hardware-free packages (`@clean/cart`) with **zero dependencies on React, Redux, Web DOM (`window`), or React Native**.
-   - `apps/web` (Vite SPA) consumes `@clean/cart` domain via Redux Toolkit (`addItemThunk`).
-   - `apps/web-next` (Next.js 15 App Router) consumes `@clean/cart` domain via Redux Toolkit (`addItemThunk`).
+   - `apps/web` (Vite SPA) consumes `@clean/cart` domain via `@clean/cart-store`.
+   - `apps/web-next` (Next.js 15 App Router) consumes `@clean/cart` domain via `@clean/cart-store`.
    - `apps/mobile` (Expo React Native) consumes `@clean/cart` domain via Zustand.
    - All three platforms consume **100% identical domain logic and use cases**.
 
 2. 🛡️ **Total Decoupling from Framework Volatility:**
-   Hexagonal Architecture places frameworks on the _outside_ as interchangeable **Infrastructure Adapters and Presentation Store Slices**. Replacing Zustand with Redux, or replacing React with Vue, requires **zero changes** to your core domain business rules.
+   Hexagonal Architecture places frameworks on the _outside_ as interchangeable **Infrastructure Adapters and Presentation Store Packages**. Replacing Zustand with Redux, or replacing React with Vue, requires **zero changes** to your core domain business rules.
 
-3. 🎨 **Shared Web Design System (`@clean/web-ui-components`):**
+3. 📦 **Shared Presentation Store Package (`@clean/cart-store`):**
+   Shared Redux Toolkit thunks (`fetchCartThunk`, `addItemThunk`, `updateLimitThunk`) and slice reducers (`cartSlice`) live in a dedicated workspace package (`packages/cart-store`), providing 100% state synchronization across Vite and Next.js applications.
+
+4. 🌐 **RTK `fetchBaseQuery` Infrastructure Adapter (`HttpCartRepository`):**
+   `HttpCartRepository` (`apps/web/src/adapters/http-cart-repository.ts`) implements `CartRepositoryPort` using Redux Toolkit's built-in `fetchBaseQuery` utility under the hood, demonstrating how RTK network utilities fit cleanly into Infrastructure Adapters.
+
+5. 🎨 **Shared Web Design System (`@clean/web-ui-components`):**
    Reusable, styled React web UI components (`SharedButton`, `SharedCard`, `SharedBadge`) live in `packages/web-ui-components` and are imported by both `apps/web` (Vite) and `apps/web-next` (Next.js).
 
-4. 🧱 **Micro-Frontend (MFE) Readiness:**
+6. 🧱 **Micro-Frontend (MFE) Readiness:**
    Vertical package slicing by DDD Bounded Contexts (`@clean/cart`, `@clean/auth`) establishes strict encapsulation boundaries, making it effortless to extract packages into independent micro-frontends or microservices.
 
-5. 🔒 **Type-Safe Operational Resilience (Result Pattern):**
+7. 🔒 **Type-Safe Operational Resilience (Result Pattern):**
    Domain operations return explicit `Result<T, E>` discriminated unions (`ok()` and `fail()`) instead of throwing uncaught exceptions.
 
 ---
@@ -49,12 +55,12 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 2. INFRASTRUCTURE LAYER (Outside the Hexagon · Platform Adapters)           │
 │    • Web Storage: LocalStorageCartRepository (apps/web & apps/web-next)     │
+│    • HTTP Client: HttpCartRepository (Uses RTK fetchBaseQuery)              │
 │    • Mobile Storage: AsyncStorageCartRepository (apps/mobile/src/adapters)  │
-│    • HTTP Client: CachedHttpCartRepository                                  │
 │    • Composition Root / DI: di-container.ts in each app                     │
 ├─────────────────────────────────────────────────────────────────────────────┤
-│ 3. PRESENTATION LAYER (Outside the Hexagon · UI & State Patterns)           │
-│    • Redux Toolkit Slices & Thunks: cart-slice.ts, cart-thunks.ts          │
+│ 3. PRESENTATION LAYER (Outside the Hexagon · UI & State Packages)           │
+│    • Shared Presentation Store: @clean/cart-store (RTK Thunks & Slices)     │
 │    • Shared Web UI Components: SharedButton, SharedCard (@clean/web-ui-comp)│
 │    • Headless UI Hooks: useHeadlessSelect (@clean/ui-logic)                 │
 │    • Vite SPA App: apps/web (React 18 + Redux Toolkit + Web Component)     │
@@ -80,6 +86,7 @@ clean-architecture-monorepo/
 │
 ├── packages/                               <-- SHARED DOMAIN & UI PACKAGES
 │   ├── cart/                               <-- @clean/cart (Cart Bounded Context Package)
+│   ├── cart-store/                         <-- @clean/cart-store (Shared Redux Store & Thunks)
 │   ├── auth/                               <-- @clean/auth (Auth Bounded Context Package)
 │   ├── logger/                             <-- @clean/logger (logger-port.ts, console-logger-adapter.ts)
 │   ├── telemetry/                          <-- @clean/telemetry (telemetry-port.ts, console-telemetry-adapter.ts)
@@ -87,19 +94,8 @@ clean-architecture-monorepo/
 │   └── web-ui-components/                  <-- @clean/web-ui-components (Shared Web Design System)
 │
 └── apps/                                   <-- PLATFORM CONSUMPTION APPS
-    ├── web/                                <-- REACT VITE SPA (Port 5173 + Redux Toolkit)
-    │   └── src/
-    │       ├── adapters/ (local-storage-cart-repository.ts)
-    │       └── ui/
-    │           ├── store/ (store.ts, cart-slice.ts, cart-thunks.ts - Redux Toolkit)
-    │           ├── di-container.ts
-    │           └── budget-tracker-container.tsx
-    │
-    ├── web-next/                           <-- NEXT.JS 15 APP ROUTER APP (Port 3000 + Redux Toolkit)
-    │   └── src/
-    │       ├── app/ (layout.tsx, page.tsx)
-    │       └── ui/ (store/store.ts, cart-slice.ts, cart-thunks.ts)
-    │
+    ├── web/                                <-- REACT VITE SPA (Port 5173 + RTK fetchBaseQuery)
+    ├── web-next/                           <-- NEXT.JS 15 APP ROUTER APP (Port 3000 + @clean/cart-store)
     ├── mobile/                             <-- REACT NATIVE MOBILE APP (Expo)
     └── mock-api/                           <-- NESTJS STANDALONE MOCK REST SERVER (Port 4000)
 ```
