@@ -30,8 +30,8 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 3. 📦 **Shared Presentation Store Package (`@clean/cart-store`):**
    Shared Redux Toolkit thunks (`fetchCartThunk`, `addItemThunk`, `updateLimitThunk`) and slice reducers (`cartSlice`) live in a dedicated workspace package (`packages/cart-store`), providing 100% state synchronization across Vite and Next.js applications.
 
-4. 🌐 **RTK `fetchBaseQuery` Infrastructure Adapter (`HttpCartRepository`):**
-   `HttpCartRepository` (`apps/web/src/adapters/http-cart-repository.ts`) implements `CartRepositoryPort` using Redux Toolkit's built-in `fetchBaseQuery` utility under the hood, demonstrating how RTK network utilities fit cleanly into Infrastructure Adapters.
+4. 🌐 **Clean HTTP Infrastructure Adapter (`HttpCartRepository`):**
+   `HttpCartRepository` (`apps/web/src/adapters/http-cart-repository.ts`) implements `CartRepositoryPort` using native browser `fetch()`, keeping network adapters decoupled from UI state libraries.
 
 5. 🎨 **Shared Web Design System (`@clean/web-ui-components`):**
    Reusable, styled React web UI components (`SharedButton`, `SharedCard`, `SharedBadge`) live in `packages/web-ui-components` and are imported by both `apps/web` (Vite) and `apps/web-next` (Next.js).
@@ -55,7 +55,7 @@ Combining **Presentation Layer Patterns**, **Hexagonal Architecture (Ports & Ada
 ├─────────────────────────────────────────────────────────────────────────────┤
 │ 2. INFRASTRUCTURE LAYER (Outside the Hexagon · Platform Adapters)           │
 │    • Web Storage: LocalStorageCartRepository (apps/web & apps/web-next)     │
-│    • HTTP Client: HttpCartRepository (Uses RTK fetchBaseQuery)              │
+│    • HTTP Client: HttpCartRepository (Uses native fetch())                  │
 │    • Mobile Storage: AsyncStorageCartRepository (apps/mobile/src/adapters)  │
 │    • Composition Root / DI: di-container.ts in each app                     │
 ├─────────────────────────────────────────────────────────────────────────────┤
@@ -94,8 +94,8 @@ clean-architecture-monorepo/
 │   └── web-ui-components/                  <-- @clean/web-ui-components (Shared Web Design System)
 │
 └── apps/                                   <-- PLATFORM CONSUMPTION APPS
-    ├── web/                                <-- REACT VITE SPA (Port 5173 + RTK fetchBaseQuery)
-    ├── web-next/                           <-- NEXT.JS 15 APP ROUTER APP (Port 3000 + @clean/cart-store)
-    ├── mobile/                             <-- REACT NATIVE MOBILE APP (Expo)
+    ├── web/                                <-- REACT VITE SPA (Port 5173 + Redux Toolkit)
+    ├── web-next/                           <-- NEXT.JS 15 APP ROUTER APP (Port 3000 + Redux Toolkit)
+    ├── mobile/                             <-- REACT NATIVE MOBILE APP (Expo + Zustand)
     └── mock-api/                           <-- NESTJS STANDALONE MOCK REST SERVER (Port 4000)
 ```

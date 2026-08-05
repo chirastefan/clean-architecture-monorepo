@@ -32,10 +32,10 @@ type BudgetTrackerViewProps = {
   cart: BudgetCart | null;
   loading: boolean;
   errorMessage: string | null;
-  onRefresh: () => Promise<void>;
-  onAddItem: (name: string, price: number, category: string) => Promise<boolean>;
-  onUpdateLimit: (newLimit: number) => Promise<boolean>;
-  onRemoveItem: (itemId: string) => Promise<void>;
+  onRefresh: () => void | Promise<void>;
+  onAddItem: (name: string, price: number, category: string) => void | Promise<boolean | void>;
+  onUpdateLimit: (newLimit: number) => void | Promise<boolean | void>;
+  onRemoveItem: (itemId: string) => void | Promise<void>;
 };
 
 export function BudgetTrackerView({
@@ -63,11 +63,9 @@ export function BudgetTrackerView({
       return;
     }
 
-    const added = await onAddItem(name.trim(), parsedAmount, category);
-    if (added) {
-      setName('');
-      setAmount('');
-    }
+    await onAddItem(name.trim(), parsedAmount, category);
+    setName('');
+    setAmount('');
   };
 
   const saveLimit = async () => {
@@ -80,10 +78,8 @@ export function BudgetTrackerView({
       return;
     }
 
-    const updated = await onUpdateLimit(parsedLimit);
-    if (updated) {
-      setLimit('');
-    }
+    await onUpdateLimit(parsedLimit);
+    setLimit('');
   };
 
   return (

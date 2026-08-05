@@ -9,7 +9,7 @@ describe('Next.js Architecture Integration Tests (apps/web-next)', () => {
   });
 
   it('should execute AddItemUseCase via Redux thunks on Next.js platform store', async () => {
-    const store = createCartReduxStore(dependencies);
+    const store = createCartReduxStore({ deps: dependencies });
     await store.dispatch(
       addItemThunk({
         cartId: 'next-cart-1',

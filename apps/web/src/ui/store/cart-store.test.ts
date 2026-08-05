@@ -36,7 +36,7 @@ describe('Redux Toolkit CartStore Integration Tests (apps/web)', () => {
 
   it('should fetch cart and update Redux store state', async () => {
     const deps = createMockDeps();
-    const store = createCartReduxStore(deps);
+    const store = createCartReduxStore({ deps });
 
     await store.dispatch(fetchCartThunk('store-test-1'));
 
@@ -49,7 +49,7 @@ describe('Redux Toolkit CartStore Integration Tests (apps/web)', () => {
 
   it('should dispatch addItem thunk and update Redux store state', async () => {
     const deps = createMockDeps();
-    const store = createCartReduxStore(deps);
+    const store = createCartReduxStore({ deps });
 
     await store.dispatch(
       addItemThunk({
@@ -72,7 +72,7 @@ describe('Redux Toolkit CartStore Integration Tests (apps/web)', () => {
 
   it('should dispatch updateLimit thunk and update Redux store state', async () => {
     const deps = createMockDeps();
-    const store = createCartReduxStore(deps);
+    const store = createCartReduxStore({ deps });
 
     await store.dispatch(updateLimitThunk({ cartId: 'store-test-3', newLimit: 750 }));
 

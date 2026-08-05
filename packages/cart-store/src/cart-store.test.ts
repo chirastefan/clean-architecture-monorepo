@@ -29,7 +29,7 @@ describe('@clean/cart-store Integration Tests', () => {
 
   it('should fetch cart using shared Redux thunk', async () => {
     const deps = createMockDeps();
-    const store = createCartReduxStore(deps);
+    const store = createCartReduxStore({ deps });
 
     await store.dispatch(fetchCartThunk('shared-store-1'));
 
@@ -41,7 +41,7 @@ describe('@clean/cart-store Integration Tests', () => {
 
   it('should add item using shared Redux thunk', async () => {
     const deps = createMockDeps();
-    const store = createCartReduxStore(deps);
+    const store = createCartReduxStore({ deps });
 
     await store.dispatch(
       addItemThunk({

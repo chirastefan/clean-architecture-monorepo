@@ -15,7 +15,7 @@ import {
 import { dependencies } from '../ui/di-container';
 
 const CART_ID = 'default-planner';
-const store = createCartReduxStore(dependencies);
+const store = createCartReduxStore({ deps: dependencies });
 
 const CATEGORIES = [
   { value: 'utilities', label: 'Utilities', color: '#f59e0b' },

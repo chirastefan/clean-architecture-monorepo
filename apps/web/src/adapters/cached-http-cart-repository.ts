@@ -5,8 +5,8 @@ export class CachedHttpCartRepository implements CartRepositoryPort {
   private readonly httpRepository: HttpCartRepository;
   private readonly memoryCache = new Map<string, BudgetCart>();
 
-  constructor(baseUrl: string) {
-    this.httpRepository = new HttpCartRepository(baseUrl);
+  constructor(dispatch: any) {
+    this.httpRepository = new HttpCartRepository(dispatch);
   }
 
   public async getCart(cartId: string): Promise<BudgetCart> {
