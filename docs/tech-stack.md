@@ -24,11 +24,12 @@ This document outlines the core technology stack, tools, and execution environme
 
 ---
 
-## 2. State Management & Presentation Packages
+## 2. State Management & Infrastructure Tools
 
-- **Shared Redux Store Package:** `@clean/cart-store` (Redux Toolkit 2.6+, RTK Async Thunks, Slices)
-- **Mobile UI State Management:** Zustand 5+ (With `useShallow` for optimized component re-rendering)
-- **HTTP Client:** Native browser `fetch()` inside Infrastructure Adapters (`HttpCartRepository`)
+- **Shared Redux Store Package:** `@clean/cart-store` (Redux Toolkit 2.6+, RTK Async Thunks, `cartSlice`)
+- **RTK Query (Infrastructure Caching):** `cartApi` (`createApi` with `fetchBaseQuery` in `apps/web/src/adapters/cart-api.ts`)
+- **HTTP Repository Adapter:** `HttpCartRepository` (implements `CartRepositoryPort` via `cartApi.endpoints`)
+- **Mobile UI State Management:** `@clean/cart-store` (Redux Toolkit shared across Web, Next.js, and Mobile)
 - **Shared Web Design System:** `@clean/web-ui-components` (Shared `SharedButton`, `SharedCard`, `SharedBadge`)
 - **Headless UI Pattern:** Custom headless hooks (`useHeadlessSelect` in `@clean/ui-logic`)
 
